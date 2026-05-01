@@ -12,14 +12,12 @@ export function Search() {
   */
   const [searchString, setSearchString] = useState("");
   const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [sort, setSort] = useState("");
-  const [reactionNum, setReactionNum] = useState(null);
+  const [sort, setSort] = useState("CREATED_DESC");
+  const [reactionNum, setReactionNum] = useState("");
   const [cities, setCities] = useState<City[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [startIndex, setStartIndex] = useState(0);
-  const [blogImages, setBlogImages] = useState([]);
-  const [lastPageNum, setLastPageNum] = useState(null);
-  const [totalBlogNum, setTotalBlogNum] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [totalBlogNum, setTotalBlogNum] = useState(0);
   const [citySearch, setCitySearch] = useState("");
   const [categorySearch, setCategorySearch] = useState("");
   const [categoryList, setCategoryList] = useState<Category[]>([]);
@@ -44,42 +42,55 @@ export function Search() {
         const categoriesResult = await axios.get(`${path}/blogs/categories`);
         setCategories(categoriesResult.data as Category[]);
 
-        // const categoryIds = categoriesResult.map((i) => i.categoryId);
-        // const cityIds = citiesResult.map((i) => i.cityId);
-
+        const params = new URLSearchParams();
+        params.append("startIndex", String(currentIndex));
+        params.append("count", "8");
         const blogResults = await axios.get(
-          `${path}/blogs?startIndex=${startIndex}&count=8`,
+          `${path}/blogs?${params.toString()}`,
         );
 
         setBlogs(blogResults.data.blogs as Blog[]);
         setTotalBlogNum(blogResults.data.count);
-        console.log(blogResults);
       } catch (e) {
         console.log(e);
       }
     })();
   }, []);
 
-  const searchBlogs = async () => {
-    try {
-      const result = await axios.get(`${path}?q=${searchString}`);
-      setBlogs(result.data.blogs as Blog[]);
-    } catch (error) {
-      console.log(error);
-    }
+  const searchBlogs = async (index = 0) => {
+    const params = new URLSearchParams();
+    params.append("startIndex", String(index));
+    params.append("count", "8");
+
+    if (searchString) params.append("q", searchString);
+    if (reactionNum) params.append("numReactions", String(reactionNum));
+    if (sort) params.append("sortBy", sort);
+
+    cityList.forEach((city) => params.append("cityIds", String(city.cityId)));
+    categoryList.forEach((cat) =>
+      params.append("categoryIds", String(cat.categoryId)),
+    );
+
+    const result = await axios.get(`${path}/blogs?${params.toString()}`);
+    setBlogs(result.data.blogs as Blog[]);
+    setTotalBlogNum(result.data.count);
+    console.log(result);
   };
 
   return (
     <div>
       <div className="flex justify-around items-center mt-20">
-        <select className="text-black bg-white">
-          <option>Test xsxnsk</option>
-        </select>
-        <input
-          type="text"
-          className="bg-white"
-          onChange={(e) => setCitySearch(e.target.value)}
-        />
+        {/* MIN REACTION */}
+        <div>
+          <p className="text-xs text-white">Min reaction</p>
+          <input
+            type="number"
+            className="bg-white"
+            onChange={(e) => setReactionNum(e.target.value)}
+          />
+        </div>
+
+        {/* CITIES */}
         <div>
           <p className="text-xs text-cyan-300">Cities</p>
           <input
@@ -150,20 +161,56 @@ export function Search() {
             </div>
           )}
         </div>
+        <div>
+          <p className="text-xs text-amber-300">Keyword(s)</p>
+          <input
+            type="text"
+            className="bg-white"
+            onChange={(e) => setSearchString(e.target.value)}
+          />
+        </div>
         <button
-          onClick={() => searchBlogs()}
+          onClick={() => {
+            setCurrentIndex(0);
+            searchBlogs(0);
+          }}
           className="bg-cyan-400 text-sm p-1.5  text-cyan-800 font-bold rounded-2xl"
         >
           SEARCH
         </button>
       </div>
-      <div className="flex gap-2">
-        {categoryList.map((category) => (
-          <div>{category.name}</div>
+      <div className="flex gap-2 mt-2">
+        {cityList.map((city) => (
+          <div
+            key={city.cityId}
+            className="text-xs text-cyan-800 bg-cyan-300/80 p-1 rounded-2xl cursor-pointer"
+            onClick={() => setCityList(cityList.filter((i) => i !== city))}
+          >
+            {city.name}
+          </div>
         ))}
+
+        {categoryList.map((category) => (
+          <div
+            className="text-xs  text-pink-800 bg-pink-300/80 p-1 rounded-2xl cursor-pointer"
+            onClick={() =>
+              setCategoryList(categoryList.filter((i) => i !== category))
+            }
+          >
+            {category.name}
+          </div>
+        ))}
+        {searchString.length > 0 && (
+          <div className="text-xs text-amber-800 bg-amber-300/80 p-1 rounded-2xl">
+            {searchString}
+          </div>
+        )}
       </div>
       <div className="flex justify-between">
-        <select>
+        <select
+          className="text-xs bg-cyan-700 text-white"
+          onChange={(e) => setSort(e.target.value)}
+        >
           <option value="ALPHABETICAL_ASC">
             Ascending alphabetically by title
           </option>
@@ -177,7 +224,7 @@ export function Search() {
             Descending by number of reactions
           </option>
           <option value="CREATED_ASC">Chronologically by creation date</option>
-          <option value="CREATED_DESC">
+          <option value="CREATED_DESC" selected>
             Reversed chronologically by creation date
           </option>
         </select>
@@ -227,13 +274,52 @@ export function Search() {
         )}
       </div>
       <div className="flex justify-center gap-2 text-amber-500">
-        <button className="text-amber-300">1</button>
-        <button>2</button>
-        <p>...</p>
-        <button>{totalBlogNum}</button>
-        <button>
-          <ArrowRight />
+        {/* PREV */}
+        {currentIndex >= 8 && (
+          <button
+            onClick={() => {
+              const newIndex = currentIndex - 8;
+              setCurrentIndex(newIndex);
+              searchBlogs(newIndex);
+            }}
+          >
+            {Math.ceil(currentIndex / 8)}
+          </button>
+        )}
+        {/* CURRENT */}
+        <button className="text-amber-300">
+          {Math.ceil(currentIndex / 8) + 1}
         </button>
+
+        {/* NEXT */}
+        {currentIndex + 8 < totalBlogNum && (
+          <button
+            onClick={() => {
+              const newIndex = currentIndex + 8;
+              setCurrentIndex(newIndex);
+              searchBlogs(newIndex);
+            }}
+          >
+            {Math.ceil(currentIndex / 8) + 2}
+          </button>
+        )}
+        {currentIndex + 16 < totalBlogNum && (
+          <>
+            <p>...</p>
+            <button
+              onClick={() => {
+                const newIndex = Math.floor(totalBlogNum / 8) * 8;
+                setCurrentIndex(newIndex);
+                searchBlogs(newIndex);
+              }}
+            >
+              {Math.ceil(totalBlogNum / 8)}
+            </button>
+            <button>
+              <ArrowRight />
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
