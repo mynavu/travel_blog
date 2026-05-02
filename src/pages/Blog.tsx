@@ -15,8 +15,14 @@ import { useParams } from "react-router-dom";
 import type { Blog, Comment, Reaction } from "../types";
 import { path } from "../App";
 import axios from "axios";
+import defaultPfp from "../assets/default_pfp.png";
 
-export function Blog() {
+type BlogProps = {
+  isLoggedIn: boolean;
+  cookies: { token?: any; userId?: any };
+};
+
+export function Blog({ cookies, isLoggedIn }: BlogProps) {
   const [blog, setBlog] = useState<Blog | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [reactions, setReactions] = useState<Record<string, number>>({
@@ -26,6 +32,9 @@ export function Blog() {
     REACTION_4: 0,
     REACTION_5: 0,
   });
+  const [userReaction, setUserReaction] = useState<null | string>(null);
+  const [showReactions, setShowReactions] = useState(false);
+
   const { id } = useParams();
 
   useEffect(() => {
@@ -48,18 +57,31 @@ export function Blog() {
       };
       reactionList.forEach((r) => {
         reactionCount[r.reaction]++;
+        if (r.userId === cookies.userId) {
+          setUserReaction(r.reaction);
+        }
       });
       console.log("REACTIONS", reactionResult.data);
       setReactions(reactionCount);
     })();
   }, []);
 
-  const reactToBlog = async (reaction) => {
-    axios.post(
-      url,
-      { email: "a@b.com", password: "123456" },
-      { headers: { "X-Authorization": token } },
+  const reactToBlog = async (reaction: string) => {
+    await axios.post(
+      `${path}/blogs/${id}/react`,
+      { reaction },
+      { headers: { "X-Authorization": cookies.token } },
     );
+    setUserReaction(reaction);
+    setReactions({ ...reactions, [reaction]: reactions[reaction] + 1 });
+  };
+
+  const removeReaction = async (reaction: string) => {
+    await axios.delete(`${path}/blogs/${id}/react`, {
+      headers: { "X-Authorization": cookies.token },
+    });
+    setUserReaction(null);
+    setReactions({ ...reactions, [reaction]: reactions[reaction] - 1 });
   };
 
   return (
@@ -74,7 +96,7 @@ export function Blog() {
             <img
               className="w-7 h-7 rounded-full object-cover"
               src={`${path}/users/${blog?.creatorId}/image`}
-              onError={(e) => (e.currentTarget.style.display = "none")}
+              onError={(e) => (e.currentTarget.src = defaultPfp)}
             />
           </div>
           <p className="text-sm">{blog?.description}</p>
@@ -83,7 +105,66 @@ export function Blog() {
             onError={(e) => (e.currentTarget.style.display = "none")}
           />
           <div className="flex justify-between">
-            <SmilePlus />
+            <div
+              className="relative"
+              onMouseEnter={() => setShowReactions(true)}
+              onMouseLeave={() => setShowReactions(false)}
+            >
+              {userReaction === "REACTION_1" ? (
+                <Smile
+                  className="text-amber-300"
+                  onClick={() => removeReaction("REACTION_1")}
+                />
+              ) : userReaction === "REACTION_2" ? (
+                <PartyPopper
+                  className="text-purple-300"
+                  onClick={() => removeReaction("REACTION_2")}
+                />
+              ) : userReaction === "REACTION_3" ? (
+                <Heart
+                  className="text-pink-300"
+                  onClick={() => removeReaction("REACTION_3")}
+                />
+              ) : userReaction === "REACTION_4" ? (
+                <ThumbsUp
+                  className="text-cyan-300"
+                  onClick={() => removeReaction("REACTION_4")}
+                />
+              ) : userReaction === "REACTION_5" ? (
+                <Star
+                  className="text-yellow-200"
+                  onClick={() => removeReaction("REACTION_5")}
+                />
+              ) : (
+                <SmilePlus />
+              )}
+
+              {isLoggedIn && showReactions && (
+                <div className="absolute bottom-4 left-0 flex gap-2 bg-teal-900 p-2 rounded-xl z-50">
+                  <Smile
+                    className="text-amber-300 cursor-pointer hover:scale-125 transition-transform"
+                    onClick={() => reactToBlog("REACTION_1")}
+                  />
+                  <PartyPopper
+                    className="text-purple-300 cursor-pointer hover:scale-125 transition-transform"
+                    onClick={() => reactToBlog("REACTION_2")}
+                  />
+                  <Heart
+                    className="text-pink-300 cursor-pointer hover:scale-125 transition-transform"
+                    onClick={() => reactToBlog("REACTION_3")}
+                  />
+                  <ThumbsUp
+                    className="text-cyan-300 cursor-pointer hover:scale-125 transition-transform"
+                    onClick={() => reactToBlog("REACTION_4")}
+                  />
+                  <Star
+                    className="text-yellow-200 cursor-pointer hover:scale-125 transition-transform"
+                    onClick={() => reactToBlog("REACTION_5")}
+                  />
+                </div>
+              )}
+            </div>
+
             <div className="flex gap-2">
               <div className="flex">
                 <MessageCircle className="text-teal-500" />
@@ -117,10 +198,12 @@ export function Blog() {
               )}
             </div>
           </div>
-          <div className="flex">
-            <input className="bg-white" />
-            <MessageCirclePlus />
-          </div>
+          {isLoggedIn && (
+            <div className="flex">
+              <input className="bg-white" />
+              <MessageCirclePlus />
+            </div>
+          )}
           {comments.length > 0 &&
             comments.map((comment) => <div>{comment.comment}</div>)}
         </div>

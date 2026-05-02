@@ -41,22 +41,32 @@ function App() {
     })();
   }, []);
 
-  // Show blogs
-  function showBlogs() {}
-
   return (
     <>
       <div className="bg-teal-900">
-        <Navbar />
-        <CreateButton />
         <Router>
+          <Navbar
+            isLoggedIn={isLoggedIn}
+            setIsLoggedIn={setIsLoggedIn}
+            cookies={cookies}
+            removeCookie={removeCookie}
+          />
+          {isLoggedIn && <CreateButton />}
           <div>
             <Routes>
               {/* change so the url has the search requests */}
               <Route path="/search" element={<Search />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/blog/:id" element={<Blog />} />
-              <Route path="/login" element={<Login />} />
+              <Route path="/profile/:id" element={<Profile />} />
+              <Route
+                path="/blog/:id"
+                element={<Blog cookies={cookies} isLoggedIn={isLoggedIn} />}
+              />
+              <Route
+                path="/login"
+                element={
+                  <Login setIsLoggedIn={setIsLoggedIn} setCookie={setCookie} />
+                }
+              />
               <Route path="/register" element={<Register />} />
               <Route path="*" />
             </Routes>
