@@ -53,11 +53,12 @@ function App() {
           <div>
             <Routes>
               {/* change so the url has the search requests */}
-              <Route path="/" element={<Search />} />
+              <Route path="/search" element={<Search />} />
               <Route path="/profile" element={<Profile />} />
-              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:id" element={<Blog />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="*" />
             </Routes>
           </div>
         </Router>

@@ -5,7 +5,9 @@ type Blog = {
   creatorId: number;
   creatorFirstName: string;
   creatorLastName: string;
+  description: string;
   numReactions: number;
+  numberOfUniqueCommenters: number;
   categoryIds: number[];
   series: string;
   creationDate: string;
@@ -17,4 +19,19 @@ type User = {
   lastName: string;
 };
 
-export type { Blog, User };
+type Comment = {
+  commentId: number;
+  commenterId: number;
+  comment: string;
+  commenterFirstName: string;
+  commenterLastName: string;
+  timeStamp: string;
+  parentId: number;
+};
+
+type Reaction = {
+  userId: number;
+  reaction: string;
+};
+
+export type { Blog, User, Comment, Reaction };

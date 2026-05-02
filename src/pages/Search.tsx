@@ -4,6 +4,8 @@ import axios from "axios";
 import type { Blog } from "../types";
 import { path } from "../App";
 import { ArrowRight, ArrowLeft, Clock, MapPin } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 export function Search() {
   /*
@@ -13,7 +15,7 @@ export function Search() {
   const [searchString, setSearchString] = useState("");
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [sort, setSort] = useState("CREATED_DESC");
-  const [reactionNum, setReactionNum] = useState("");
+  const [reactionNum, setReactionNum] = useState<number>(0);
   const [cities, setCities] = useState<City[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -24,6 +26,9 @@ export function Search() {
   const [cityList, setCityList] = useState<City[]>([]);
   const [categoryFocused, setCategoryFocused] = useState(false);
   const [cityFocused, setCityFocused] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const navigate = useNavigate();
 
   // Types
   type City = { cityId: number; name: string };
@@ -37,44 +42,65 @@ export function Search() {
     (async () => {
       try {
         const citiesResult = await axios.get(`${path}/blogs/cities`);
-        setCities(citiesResult.data as City[]);
+        const citiesData = citiesResult.data as City[];
+        setCities(citiesData);
 
         const categoriesResult = await axios.get(`${path}/blogs/categories`);
-        setCategories(categoriesResult.data as Category[]);
+        const categoriesData = categoriesResult.data as Category[];
+        setCategories(categoriesData);
 
-        const params = new URLSearchParams();
-        params.append("startIndex", String(currentIndex));
-        params.append("count", "8");
-        const blogResults = await axios.get(
-          `${path}/blogs?${params.toString()}`,
+        const q = searchParams.get("q") || "";
+        const sort = searchParams.get("sortBy") || "CREATED_DESC";
+        const startIndex = Number(searchParams.get("startIndex")) || 0;
+        const numReactions = Number(searchParams.get("numReactions")) || 0;
+        const cityIds = searchParams.getAll("cityIds").map(Number);
+        const categoryIds = searchParams.getAll("categoryIds").map(Number);
+
+        setSearchString(q);
+        setSort(sort);
+        setCurrentIndex(startIndex);
+        setReactionNum(numReactions);
+        setCityList(citiesData.filter((c) => cityIds.includes(c.cityId)));
+        setCategoryList(
+          categoriesData.filter((c) => categoryIds.includes(c.categoryId)),
         );
 
-        setBlogs(blogResults.data.blogs as Blog[]);
-        setTotalBlogNum(blogResults.data.count);
+        searchBlogs(
+          startIndex,
+          q,
+          sort,
+          numReactions,
+          citiesData.filter((c) => cityIds.includes(c.cityId)),
+          categoriesData.filter((c) => categoryIds.includes(c.categoryId)),
+        );
       } catch (e) {
         console.log(e);
       }
     })();
   }, []);
 
-  const searchBlogs = async (index = 0) => {
+  const searchBlogs = async (
+    index = 0,
+    q = searchString,
+    sortBy = sort,
+    reactions = reactionNum,
+    cList = cityList,
+    catList = categoryList,
+  ) => {
     const params = new URLSearchParams();
     params.append("startIndex", String(index));
     params.append("count", "8");
-
-    if (searchString) params.append("q", searchString);
-    if (reactionNum) params.append("numReactions", String(reactionNum));
-    if (sort) params.append("sortBy", sort);
-
-    cityList.forEach((city) => params.append("cityIds", String(city.cityId)));
-    categoryList.forEach((cat) =>
+    if (q) params.append("q", q);
+    if (reactions) params.append("numReactions", String(reactions));
+    if (sortBy) params.append("sortBy", sortBy);
+    cList.forEach((city) => params.append("cityIds", String(city.cityId)));
+    catList.forEach((cat) =>
       params.append("categoryIds", String(cat.categoryId)),
     );
-
+    setSearchParams(params);
     const result = await axios.get(`${path}/blogs?${params.toString()}`);
     setBlogs(result.data.blogs as Blog[]);
     setTotalBlogNum(result.data.count);
-    console.log(result);
   };
 
   return (
@@ -86,7 +112,7 @@ export function Search() {
           <input
             type="number"
             className="bg-white"
-            onChange={(e) => setReactionNum(e.target.value)}
+            onChange={(e) => setReactionNum(Number(e.target.value))}
           />
         </div>
 
@@ -192,6 +218,7 @@ export function Search() {
 
         {categoryList.map((category) => (
           <div
+            key={category.categoryId}
             className="text-xs  text-pink-800 bg-pink-300/80 p-1 rounded-2xl cursor-pointer"
             onClick={() =>
               setCategoryList(categoryList.filter((i) => i !== category))
@@ -224,7 +251,7 @@ export function Search() {
             Descending by number of reactions
           </option>
           <option value="CREATED_ASC">Chronologically by creation date</option>
-          <option value="CREATED_DESC" selected>
+          <option defaultValue="CREATED_DESC">
             Reversed chronologically by creation date
           </option>
         </select>
@@ -236,10 +263,12 @@ export function Search() {
             <div
               key={blog.blogId}
               className="bg-teal-950 w-60 p-3 flex flex-col items-start gap-1"
+              onClick={() => navigate(`/blog/${blog.blogId}`)}
             >
               <img
                 src={`${path}/blogs/${blog.blogId}/image`}
                 onError={(e) => (e.currentTarget.style.display = "none")}
+                className="w-60 h-60 object-cover"
               />
               <p className="text-amber-300 text-xs font-bold">{blog.title}</p>
               <p className="text-amber-300 text-xs">
@@ -308,7 +337,7 @@ export function Search() {
             <p>...</p>
             <button
               onClick={() => {
-                const newIndex = Math.floor(totalBlogNum / 8) * 8;
+                const newIndex = (Math.ceil(totalBlogNum / 8) - 1) * 8;
                 setCurrentIndex(newIndex);
                 searchBlogs(newIndex);
               }}
