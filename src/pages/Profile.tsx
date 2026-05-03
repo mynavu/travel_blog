@@ -7,7 +7,7 @@ import { path } from "../App";
 import type { Blog, User, Comment, Reaction, Category, City } from "../types";
 import { useNavigate } from "react-router-dom";
 import { Pencil, LibraryBig, MessageCircle, Heart } from "lucide-react";
-import { EditProfileModal } from "../components/EditProfileModal";
+import { EditProfileModal } from "../components/modals/EditProfileModal";
 import { UserSeriesBlogs } from "../components/UserSeriesBlogs";
 import { UserInteractedBlogs } from "../components/UserInteractedBlogs";
 

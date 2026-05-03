@@ -4,7 +4,7 @@ import axios from "axios";
 import type { Blog } from "../types";
 import { path } from "../App";
 import { ArrowRight, ArrowLeft, Clock, MapPin } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import type { City, Category } from "../types";
 
@@ -30,6 +30,7 @@ export function Search() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Types
 
@@ -262,7 +263,11 @@ export function Search() {
             <div
               key={blog.blogId}
               className="bg-teal-950 w-60 p-3 flex flex-col items-start gap-1"
-              onClick={() => navigate(`/blog/${blog.blogId}`)}
+              onClick={() =>
+                navigate(`/blog/${blog.blogId}`, {
+                  state: { background: location },
+                })
+              }
             >
               <img
                 src={`${path}/blogs/${blog.blogId}/image`}

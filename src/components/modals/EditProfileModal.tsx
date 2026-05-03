@@ -1,8 +1,8 @@
 import { X } from "lucide-react";
 import { useState, useEffect } from "react";
-import { path } from "../App";
+import { path } from "../../App";
 import axios from "axios";
-import defaultPfp from "../assets/default_pfp.png";
+import defaultPfp from "../../assets/default_pfp.png";
 
 type EditProfileModalProps = {
   cookies: { token?: any; userId?: any };

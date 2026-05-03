@@ -19,6 +19,7 @@ import { path } from "../App";
 import axios from "axios";
 import defaultPfp from "../assets/default_pfp.png";
 import { BlogModal } from "../components/modals/BlogModal";
+import { DeleteBlogModal } from "../components/modals/DeleteBlogModal";
 
 type BlogProps = {
   isLoggedIn: boolean;
@@ -131,6 +132,13 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
           blogId={id}
           setShowModal={setShowModal}
           cookies={cookies}
+        />
+      )}
+      {showDeleteModal && (
+        <DeleteBlogModal
+          blogId={id}
+          cookies={cookies}
+          setShowDeleteModal={setShowDeleteModal}
         />
       )}
       <div className="flex flex-row items-start justify-center gap-4 mt-25">

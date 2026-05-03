@@ -3,7 +3,8 @@ import { use, useEffect, useState } from "react";
 import axios from "axios";
 import { path } from "../App";
 import type { Blog, User, Comment, Reaction, City, Category } from "../types";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+
 import { Clock, MapPin } from "lucide-react";
 
 type UserInteractedBlogsProps = {
@@ -17,6 +18,7 @@ export function UserInteractedBlogs({
   categories,
 }: UserInteractedBlogsProps) {
   const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <div className="mt-20 p-4 flex flex-col gap-6 bg-green-400">
@@ -26,7 +28,11 @@ export function UserInteractedBlogs({
             <div
               key={blog.blogId}
               className="bg-teal-950 w-60 p-3 flex flex-col items-start gap-1"
-              onClick={() => navigate(`/blog/${blog.blogId}`)}
+              onClick={() =>
+                navigate(`/blog/${blog.blogId}`, {
+                  state: { background: location },
+                })
+              }
             >
               <img
                 src={`${path}/blogs/${blog.blogId}/image`}
