@@ -48,6 +48,9 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
   const [showModal, setShowModal] = useState(false);
   const [cities, setCities] = useState<City[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [validCity, setValidCity] = useState<City | null>(null);
+  const [validCategories, setValidCategories] = useState<Category[]>([]);
+  const [similarBlogs, setSimilarBlogs] = useState<Blog[]>([]);
 
   const { id } = useParams();
 
@@ -60,9 +63,17 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
       const reactionResult = await axios.get(`${path}/blogs/${id}/react`);
       const reactionList: Reaction[] = reactionResult.data;
       const citiesResult = await axios.get(`${path}/blogs/cities`);
-      setCities(citiesResult.data as City[]);
       const categoriesResult = await axios.get(`${path}/blogs/categories`);
-      setCategories(categoriesResult.data as Category[]);
+      const city = citiesResult.data.find(
+        (i: City) => i.cityId === blogResult.data.cityId,
+      );
+      const cats = categoriesResult.data.filter((c: Category) =>
+        blogResult.data.categoryIds.includes(c.categoryId),
+      );
+      setValidCity(city);
+      setValidCategories(cats);
+
+      await getSimilarBlogs(blogResult.data, city, cats);
       const reactionCount: Record<string, number> = {
         REACTION_1: 0,
         REACTION_2: 0,
@@ -146,6 +157,33 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
     setComments(commentResult.data);
     setCommentString("");
     setReplyComment(null);
+  };
+  const getSimilarBlogs = async (blog: Blog, city: City, cats: Category[]) => {
+    console.log("getSimilarBlogs called with:", blog, city, cats);
+    const params = new URLSearchParams();
+    params.append("count", "8");
+    params.append("cityIds", String(city.cityId));
+    console.log("CATS", cats);
+    cats.forEach((cat) => params.append("categoryIds", String(cat.categoryId)));
+    const result = await axios.get(`${path}/blogs?${params.toString()}`);
+    console.log("similar blogs result:", result.data.blogs);
+    setSimilarBlogs(
+      result.data.blogs.filter((b: Blog) => b.blogId !== blog.blogId),
+    );
+    const sameCreatorParams = new URLSearchParams();
+    sameCreatorParams.append("creatorId", String(blog.creatorId));
+    sameCreatorParams.append("count", "8");
+    const creatorResult = await axios.get(
+      `${path}/blogs?${sameCreatorParams.toString()}`,
+    );
+
+    setSimilarBlogs((prev) => {
+      const newBlogs = creatorResult.data.blogs.filter(
+        (b: Blog) =>
+          b.blogId !== blog.blogId && !prev.some((p) => p.blogId === b.blogId),
+      );
+      return [...prev, ...newBlogs];
+    });
   };
 
   return (
@@ -293,9 +331,7 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
             <div className="flex gap-2">
               <div className="flex gap-1">
                 <MapPin size={15} className="text-white" />
-                <p className="text-xs text-white">
-                  {cities.find((i) => i.cityId === blog.cityId)?.name}
-                </p>
+                <p className="text-xs text-white">{validCity?.name}</p>
               </div>
               <div className="flex gap-1">
                 <Clock size={15} className="text-white" />
@@ -305,10 +341,10 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
               </div>
             </div>
             <div className="flex flex-wrap text-white gap-2">
-              {blog.categoryIds.map((id) => (
-                <p key={id} className="text-xxs glass rounded-2xl">
+              {validCategories.map((cat) => (
+                <p key={cat.categoryId} className="text-xxs glass rounded-2xl">
                   &nbsp;&nbsp;&nbsp;
-                  {categories.find((i) => i.categoryId === id)?.name}
+                  {cat.name}
                   &nbsp;&nbsp;&nbsp;
                 </p>
               ))}
@@ -462,6 +498,14 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
             )}
           </div>
         )}
+        <div className="flex flex-col">
+          <p className="text-white">Similar: {similarBlogs.length}</p>
+          {similarBlogs.map((blog) => (
+            <div key={blog.blogId} className="bg-amber-500">
+              <p>{blog.title}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

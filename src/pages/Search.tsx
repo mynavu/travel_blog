@@ -38,6 +38,8 @@ export function Search() {
   // Constants
   const PAGE_SIZE = 8;
 
+  // FIX SEARCHING LOGIC
+
   // Load data and populate blogs
   useEffect(() => {
     (async () => {
