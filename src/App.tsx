@@ -51,12 +51,15 @@ function App() {
             cookies={cookies}
             removeCookie={removeCookie}
           />
-          {isLoggedIn && <CreateButton />}
+          {isLoggedIn && <CreateButton cookies={cookies} />}
           <div>
             <Routes>
               {/* change so the url has the search requests */}
               <Route path="/search" element={<Search />} />
-              <Route path="/profile/:id" element={<Profile />} />
+              <Route
+                path="/profile/:id"
+                element={<Profile cookies={cookies} />}
+              />
               <Route
                 path="/blog/:id"
                 element={<Blog cookies={cookies} isLoggedIn={isLoggedIn} />}

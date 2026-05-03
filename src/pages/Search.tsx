@@ -6,6 +6,7 @@ import { path } from "../App";
 import { ArrowRight, ArrowLeft, Clock, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
+import type { City, Category } from "../types";
 
 export function Search() {
   /*
@@ -31,8 +32,6 @@ export function Search() {
   const navigate = useNavigate();
 
   // Types
-  type City = { cityId: number; name: string };
-  type Category = { categoryId: number; name: string };
 
   // Constants
   const PAGE_SIZE = 8;
@@ -251,7 +250,7 @@ export function Search() {
             Descending by number of reactions
           </option>
           <option value="CREATED_ASC">Chronologically by creation date</option>
-          <option defaultValue="CREATED_DESC">
+          <option defaultValue="CREATED_DESC" value="CREATED_DESC">
             Reversed chronologically by creation date
           </option>
         </select>

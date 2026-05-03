@@ -34,6 +34,9 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
   });
   const [userReaction, setUserReaction] = useState<null | string>(null);
   const [showReactions, setShowReactions] = useState(false);
+  const [expandedComments, setExpandedComments] = useState<number[]>([]);
+  const [replyComment, setReplyComment] = useState<Comment | null>(null);
+  const [commentString, setCommentString] = useState("");
 
   const { id } = useParams();
 
@@ -57,7 +60,7 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
       };
       reactionList.forEach((r) => {
         reactionCount[r.reaction]++;
-        if (r.userId === cookies.userId) {
+        if (r.userId === Number(cookies.userId)) {
           setUserReaction(r.reaction);
         }
       });
@@ -65,6 +68,14 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
       setReactions(reactionCount);
     })();
   }, []);
+
+  const toggleReplies = (commentId: number) => {
+    if (expandedComments.includes(commentId)) {
+      setExpandedComments(expandedComments.filter((id) => id !== commentId));
+    } else {
+      setExpandedComments([...expandedComments, commentId]);
+    }
+  };
 
   const reactToBlog = async (reaction: string) => {
     await axios.post(
@@ -84,130 +95,254 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
     setReactions({ ...reactions, [reaction]: reactions[reaction] - 1 });
   };
 
+  const commentOnBlog = async () => {
+    if (commentString.length === 0) {
+      return;
+    }
+
+    const parentId = replyComment ? replyComment.commentId : null;
+
+    await axios.post(
+      `${path}/blogs/${id}/comments`,
+      { comment: commentString, parentId },
+      {
+        headers: { "X-Authorization": cookies.token },
+      },
+    );
+    const commentResult = await axios.get(`${path}/blogs/${id}/comments`);
+    setComments(commentResult.data);
+
+    setCommentString("");
+    setReplyComment(null);
+  };
+
+  const getSimilarBlogs = async () => {};
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-4 mt-15">
-      {blog !== null && (
-        <div className="flex flex-col w-100 justify-center align-middle">
-          <p className="text-amber-300">{blog?.title}</p>
-          <div className="flex">
-            <p className="text-sm">
-              {blog?.creatorFirstName} {blog?.creatorLastName}
-            </p>
+    <div className="flex flex-col">
+      <div className="flex flex-row items-start justify-center gap-4 mt-25">
+        {blog !== null && (
+          <div className="flex flex-col w-100">
             <img
-              className="w-7 h-7 rounded-full object-cover"
-              src={`${path}/users/${blog?.creatorId}/image`}
-              onError={(e) => (e.currentTarget.src = defaultPfp)}
+              src={`${path}/blogs/${blog?.blogId}/image`}
+              onError={(e) => (e.currentTarget.style.display = "none")}
+              className="w-100 h-100 object-cover"
             />
-          </div>
-          <p className="text-sm">{blog?.description}</p>
-          <img
-            src={`${path}/blogs/${blog?.blogId}/image`}
-            onError={(e) => (e.currentTarget.style.display = "none")}
-          />
-          <div className="flex justify-between">
-            <div
-              className="relative"
-              onMouseEnter={() => setShowReactions(true)}
-              onMouseLeave={() => setShowReactions(false)}
-            >
-              {userReaction === "REACTION_1" ? (
-                <Smile
-                  className="text-amber-300"
-                  onClick={() => removeReaction("REACTION_1")}
-                />
-              ) : userReaction === "REACTION_2" ? (
-                <PartyPopper
-                  className="text-purple-300"
-                  onClick={() => removeReaction("REACTION_2")}
-                />
-              ) : userReaction === "REACTION_3" ? (
-                <Heart
-                  className="text-pink-300"
-                  onClick={() => removeReaction("REACTION_3")}
-                />
-              ) : userReaction === "REACTION_4" ? (
-                <ThumbsUp
-                  className="text-cyan-300"
-                  onClick={() => removeReaction("REACTION_4")}
-                />
-              ) : userReaction === "REACTION_5" ? (
-                <Star
-                  className="text-yellow-200"
-                  onClick={() => removeReaction("REACTION_5")}
-                />
-              ) : (
-                <SmilePlus />
-              )}
-
-              {isLoggedIn && showReactions && (
-                <div className="absolute bottom-4 left-0 flex gap-2 bg-teal-900 p-2 rounded-xl z-50">
+            <div className="flex justify-between mt-2">
+              {" "}
+              <div
+                className="relative"
+                onMouseEnter={() => setShowReactions(true)}
+                onMouseLeave={() => setShowReactions(false)}
+              >
+                {userReaction === "REACTION_1" ? (
                   <Smile
-                    className="text-amber-300 cursor-pointer hover:scale-125 transition-transform"
-                    onClick={() => reactToBlog("REACTION_1")}
+                    className="text-amber-300"
+                    onClick={() => removeReaction("REACTION_1")}
                   />
+                ) : userReaction === "REACTION_2" ? (
                   <PartyPopper
-                    className="text-purple-300 cursor-pointer hover:scale-125 transition-transform"
-                    onClick={() => reactToBlog("REACTION_2")}
+                    className="text-purple-300"
+                    onClick={() => removeReaction("REACTION_2")}
                   />
+                ) : userReaction === "REACTION_3" ? (
                   <Heart
-                    className="text-pink-300 cursor-pointer hover:scale-125 transition-transform"
-                    onClick={() => reactToBlog("REACTION_3")}
+                    className="text-pink-300"
+                    onClick={() => removeReaction("REACTION_3")}
                   />
+                ) : userReaction === "REACTION_4" ? (
                   <ThumbsUp
-                    className="text-cyan-300 cursor-pointer hover:scale-125 transition-transform"
-                    onClick={() => reactToBlog("REACTION_4")}
+                    className="text-cyan-300"
+                    onClick={() => removeReaction("REACTION_4")}
                   />
+                ) : userReaction === "REACTION_5" ? (
                   <Star
-                    className="text-yellow-200 cursor-pointer hover:scale-125 transition-transform"
-                    onClick={() => reactToBlog("REACTION_5")}
+                    className="text-yellow-200"
+                    onClick={() => removeReaction("REACTION_5")}
                   />
-                </div>
-              )}
-            </div>
+                ) : (
+                  <SmilePlus />
+                )}
 
-            <div className="flex gap-2">
-              <div className="flex">
-                <MessageCircle className="text-teal-500" />
-                {comments.length}
+                {isLoggedIn && showReactions && (
+                  <div className="absolute bottom-4 left-0 flex gap-2 bg-teal-900 p-2 rounded-xl z-50">
+                    <Smile
+                      className="text-amber-300 cursor-pointer hover:scale-125 transition-transform"
+                      onClick={() => reactToBlog("REACTION_1")}
+                    />
+                    <PartyPopper
+                      className="text-purple-300 cursor-pointer hover:scale-125 transition-transform"
+                      onClick={() => reactToBlog("REACTION_2")}
+                    />
+                    <Heart
+                      className="text-pink-300 cursor-pointer hover:scale-125 transition-transform"
+                      onClick={() => reactToBlog("REACTION_3")}
+                    />
+                    <ThumbsUp
+                      className="text-cyan-300 cursor-pointer hover:scale-125 transition-transform"
+                      onClick={() => reactToBlog("REACTION_4")}
+                    />
+                    <Star
+                      className="text-yellow-200 cursor-pointer hover:scale-125 transition-transform"
+                      onClick={() => reactToBlog("REACTION_5")}
+                    />
+                  </div>
+                )}
               </div>
-              {reactions.REACTION_1 > 0 && (
+              <div className="flex gap-2">
                 <div className="flex">
-                  <Smile className="text-amber-300" /> {reactions.REACTION_1}
+                  <MessageCircle className="text-teal-500" />
+                  {comments.length}
                 </div>
-              )}
-              {reactions.REACTION_2 > 0 && (
-                <div className="flex">
-                  <PartyPopper className="text-purple-300" />
-                  {reactions.REACTION_2}
-                </div>
-              )}
-              {reactions.REACTION_3 > 0 && (
-                <div className="flex">
-                  <Heart className="text-pink-300" /> {reactions.REACTION_3}
-                </div>
-              )}
-              {reactions.REACTION_4 > 0 && (
-                <div className="flex">
-                  <ThumbsUp className="text-cyan-300" /> {reactions.REACTION_4}
-                </div>
-              )}
-              {reactions.REACTION_5 > 0 && (
-                <div className="flex">
-                  <Star className="text-yellow-200" /> {reactions.REACTION_5}
-                </div>
-              )}
+                {reactions.REACTION_1 > 0 && (
+                  <div className="flex">
+                    <Smile className="text-amber-300" /> {reactions.REACTION_1}
+                  </div>
+                )}
+                {reactions.REACTION_2 > 0 && (
+                  <div className="flex">
+                    <PartyPopper className="text-purple-300" />
+                    {reactions.REACTION_2}
+                  </div>
+                )}
+                {reactions.REACTION_3 > 0 && (
+                  <div className="flex">
+                    <Heart className="text-pink-300" /> {reactions.REACTION_3}
+                  </div>
+                )}
+                {reactions.REACTION_4 > 0 && (
+                  <div className="flex">
+                    <ThumbsUp className="text-cyan-300" />{" "}
+                    {reactions.REACTION_4}
+                  </div>
+                )}
+                {reactions.REACTION_5 > 0 && (
+                  <div className="flex">
+                    <Star className="text-yellow-200" /> {reactions.REACTION_5}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-          {isLoggedIn && (
+        )}
+
+        {blog !== null && (
+          <div className="w-60 h-100 flex flex-col">
+            <p className="text-amber-300">{blog?.title}</p>
             <div className="flex">
-              <input className="bg-white" />
-              <MessageCirclePlus />
+              <p className="text-sm">
+                {blog?.creatorFirstName} {blog?.creatorLastName}
+              </p>
+              <img
+                className="w-7 h-7 rounded-full object-cover"
+                src={`${path}/users/${blog?.creatorId}/image`}
+                onError={(e) => (e.currentTarget.src = defaultPfp)}
+              />
             </div>
-          )}
-          {comments.length > 0 &&
-            comments.map((comment) => <div>{comment.comment}</div>)}
-        </div>
-      )}
+            <p>SERIES: {blog?.series}</p>
+            <p className="text-sm">{blog?.description}</p>
+
+            {/* comments area */}
+            <div className="flex flex-col overflow-y-auto flex-1">
+              {comments
+                .filter((comment) => comment.parentId === null)
+                .map((comment) => {
+                  const replies = comments.filter(
+                    (child) => child.parentId === comment.commentId,
+                  );
+                  const isExpanded = expandedComments.includes(
+                    comment.commentId,
+                  );
+
+                  return (
+                    <div
+                      key={comment.commentId}
+                      className="flex flex-col bg-amber-300"
+                    >
+                      <div className="flex flex-row">
+                        <img
+                          className="w-7 h-7 rounded-full object-cover"
+                          src={`${path}/users/${comment.commenterId}/image`}
+                          onError={(e) => (e.currentTarget.src = defaultPfp)}
+                        />
+                        <div className="flex flex-col items-start">
+                          <p>
+                            {comment.commenterFirstName}{" "}
+                            {comment.commenterLastName}
+                          </p>
+                          <p>
+                            {new Date(comment.timestamp).toLocaleDateString(
+                              "en-NZ",
+                            )}
+                          </p>
+                          <p>{comment.comment}</p>
+                          <div
+                            className="flex items-center gap-1 cursor-pointer"
+                            onClick={() => toggleReplies(comment.commentId)}
+                          >
+                            <MessageCircle size={16} />
+                            <p>{replies.length}</p>
+                          </div>
+                          <div
+                            className="flex items-center gap-1 cursor-pointer"
+                            onClick={() => setReplyComment(comment)}
+                          >
+                            <MessageCirclePlus size={16} />
+                            <button>Reply</button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {isExpanded &&
+                        replies.map((childComment) => (
+                          <div
+                            key={childComment.commentId}
+                            className="flex bg-pink-600"
+                          >
+                            <img
+                              className="w-7 h-7 rounded-full object-cover"
+                              src={`${path}/users/${childComment.commenterId}/image`}
+                              onError={(e) =>
+                                (e.currentTarget.src = defaultPfp)
+                              }
+                            />
+                            <p>{childComment.comment}</p>
+                            <p>
+                              {childComment.commenterFirstName}{" "}
+                              {childComment.commenterLastName}
+                            </p>
+                            <p>
+                              {new Date(
+                                childComment.timestamp,
+                              ).toLocaleDateString("en-NZ")}
+                            </p>
+                          </div>
+                        ))}
+                    </div>
+                  );
+                })}
+            </div>
+            {isLoggedIn && (
+              <div className="flex sticky bottom-0 bg-teal-900 pt-2">
+                {replyComment !== null && (
+                  <button onClick={() => setReplyComment(null)}>
+                    @{replyComment.commenterFirstName}{" "}
+                    {replyComment.commenterLastName}
+                  </button>
+                )}
+                <input
+                  className="bg-white flex-1"
+                  onChange={(e) => setCommentString(e.target.value)}
+                  value={commentString}
+                />
+                <MessageCirclePlus onClick={() => commentOnBlog()} />
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      <p>Similar blogs</p>
     </div>
   );
 }

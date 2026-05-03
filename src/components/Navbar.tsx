@@ -54,6 +54,7 @@ export function Navbar({
                 className="w-7 h-7 rounded-full object-cover"
                 src={`${path}/users/${cookies.userId}/image`}
                 onError={(e) => (e.currentTarget.src = defaultPfp)}
+                onClick={() => navigate(`/profile/${cookies.userId}`)}
               />
               <button
                 onClick={() => logOut()}

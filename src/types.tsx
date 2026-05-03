@@ -25,13 +25,17 @@ type Comment = {
   comment: string;
   commenterFirstName: string;
   commenterLastName: string;
-  timeStamp: string;
+  timestamp: string;
   parentId: number;
 };
+
+type City = { cityId: number; name: string };
+
+type Category = { categoryId: number; name: string };
 
 type Reaction = {
   userId: number;
   reaction: string;
 };
 
-export type { Blog, User, Comment, Reaction };
+export type { Blog, User, Comment, Reaction, City, Category };
