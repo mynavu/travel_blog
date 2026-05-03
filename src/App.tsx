@@ -16,6 +16,7 @@ import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
 import { CreateButton } from "./components/CreateButton";
 import { Blog } from "./pages/Blog";
+import Grainient from "./components/Grainient";
 
 export const path = `http://localhost:4941/api/v1`;
 
@@ -46,7 +47,33 @@ function AppInner() {
   }, []);
 
   return (
-    <div className="bg-teal-900">
+    <div style={{ position: "relative", minHeight: "100vh" }}>
+      <div style={{ position: "fixed", inset: 0, zIndex: -1 }}>
+        <Grainient
+          color1="#007498"
+          color2="#003b5e"
+          color3="#55b3ff"
+          timeSpeed={0.25}
+          colorBalance={0.09}
+          warpStrength={1}
+          warpFrequency={5}
+          warpSpeed={2.5}
+          warpAmplitude={50}
+          blendAngle={0}
+          blendSoftness={0.05}
+          rotationAmount={500}
+          noiseScale={2}
+          grainAmount={0.1}
+          grainScale={2}
+          grainAnimated={false}
+          contrast={1.5}
+          gamma={1}
+          saturation={1}
+          centerX={0}
+          centerY={0}
+          zoom={0.9}
+        />
+      </div>
       <Navbar
         isLoggedIn={isLoggedIn}
         setIsLoggedIn={setIsLoggedIn}
@@ -71,7 +98,6 @@ function AppInner() {
           <Route path="/register" element={<Register />} />
           <Route path="*" />
         </Routes>
-
         {background && (
           <Routes>
             <Route
@@ -82,7 +108,7 @@ function AppInner() {
                   onClick={() => navigate(-1)}
                 >
                   <div
-                    className="bg-teal-950 rounded-xl overflow-hidden"
+                    className="bg-teal-950 rounded-xl overflow-hidden glass"
                     style={{ width: "90vw", height: "90vh" }}
                     onClick={(e) => e.stopPropagation()}
                   >

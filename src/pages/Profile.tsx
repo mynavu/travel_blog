@@ -137,7 +137,13 @@ export function Profile({ cookies }: ProfileProps) {
         <MessageCircle onClick={() => setViewState("commented")} />
         <Heart onClick={() => setViewState("reacted")} />
       </div>
-      {viewState === "series" && <UserSeriesBlogs blogs={blogs} />}
+      {viewState === "series" && (
+        <UserSeriesBlogs
+          blogs={blogs}
+          cities={cities}
+          categories={categories}
+        />
+      )}
       {viewState === "commented" && (
         <UserInteractedBlogs
           blogs={commentedBlogs}

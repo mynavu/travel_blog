@@ -10,7 +10,6 @@
   --social-bg: rgba(244, 243, 236, 0.5);
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
   --sans: system-ui, "Segoe UI", Roboto, sans-serif;
   --heading: system-ui, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
@@ -19,7 +18,6 @@
   letter-spacing: 0.18px;
   color-scheme: light dark;
   color: var(--text);
-  background: var(--bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -34,7 +32,7 @@
   :root {
     --text: #9ca3af;
     --text-h: #f3f4f6;
-    --bg: oklch(27.7% 0.046 192.524);
+    --bg: #16171d;
     --border: #2e303a;
     --code-bg: #1f2028;
     --accent: #c084fc;

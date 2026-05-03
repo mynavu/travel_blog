@@ -7,6 +7,7 @@ import { ArrowRight, ArrowLeft, Clock, MapPin } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import type { City, Category } from "../types";
+import { BlogDisplay } from "../components/BlogDisplay";
 
 export function Search() {
   /*
@@ -106,12 +107,38 @@ export function Search() {
   return (
     <div>
       <div className="flex justify-around items-center mt-20">
+        <div>
+          <p className="text-xs text-white">Sort</p>
+          <select
+            className="text-xs bg-cyan-700 text-white w-30"
+            onChange={(e) => setSort(e.target.value)}
+          >
+            <option value="ALPHABETICAL_ASC">
+              Ascending alphabetically by title
+            </option>
+            <option value="ALPHABETICAL_DESC">
+              Descending alphabetically by title
+            </option>
+            <option value="REACTIONS_ASC">
+              Ascending by number of reactions
+            </option>
+            <option value="REACTIONS_DESC">
+              Descending by number of reactions
+            </option>
+            <option value="CREATED_ASC">
+              Chronologically by creation date
+            </option>
+            <option defaultValue="CREATED_DESC" value="CREATED_DESC">
+              Reversed chronologically by creation date
+            </option>
+          </select>
+        </div>
         {/* MIN REACTION */}
         <div>
           <p className="text-xs text-white">Min reaction</p>
           <input
             type="number"
-            className="bg-white"
+            className="bg-white w-20"
             onChange={(e) => setReactionNum(Number(e.target.value))}
           />
         </div>
@@ -209,7 +236,7 @@ export function Search() {
         {cityList.map((city) => (
           <div
             key={city.cityId}
-            className="text-xs text-cyan-800 bg-cyan-300/80 p-1 rounded-2xl cursor-pointer"
+            className="text-xs text-white glass-blue p-1 rounded-2xl cursor-pointer"
             onClick={() => setCityList(cityList.filter((i) => i !== city))}
           >
             {city.name}
@@ -219,7 +246,7 @@ export function Search() {
         {categoryList.map((category) => (
           <div
             key={category.categoryId}
-            className="text-xs  text-pink-800 bg-pink-300/80 p-1 rounded-2xl cursor-pointer"
+            className="text-xs text-white glass-pink p-1 rounded-2xl cursor-pointer"
             onClick={() =>
               setCategoryList(categoryList.filter((i) => i !== category))
             }
@@ -228,79 +255,18 @@ export function Search() {
           </div>
         ))}
         {searchString.length > 0 && (
-          <div className="text-xs text-amber-800 bg-amber-300/80 p-1 rounded-2xl">
+          <div className="text-xs text-white glass-yellow p-1 rounded-2xl cursor-pointer">
             {searchString}
           </div>
         )}
       </div>
       <div className="flex justify-between">
-        <select
-          className="text-xs bg-cyan-700 text-white"
-          onChange={(e) => setSort(e.target.value)}
-        >
-          <option value="ALPHABETICAL_ASC">
-            Ascending alphabetically by title
-          </option>
-          <option value="ALPHABETICAL_DESC">
-            Descending alphabetically by title
-          </option>
-          <option value="REACTIONS_ASC">
-            Ascending by number of reactions
-          </option>
-          <option value="REACTIONS_DESC">
-            Descending by number of reactions
-          </option>
-          <option value="CREATED_ASC">Chronologically by creation date</option>
-          <option defaultValue="CREATED_DESC" value="CREATED_DESC">
-            Reversed chronologically by creation date
-          </option>
-        </select>
         <p>{totalBlogNum} results found</p>
       </div>
       <div className="flex justify-around gap-3 flex-wrap">
         {blogs.length ? (
           blogs.map((blog) => (
-            <div
-              key={blog.blogId}
-              className="bg-teal-950 w-60 p-3 flex flex-col items-start gap-1"
-              onClick={() =>
-                navigate(`/blog/${blog.blogId}`, {
-                  state: { background: location },
-                })
-              }
-            >
-              <img
-                src={`${path}/blogs/${blog.blogId}/image`}
-                onError={(e) => (e.currentTarget.style.display = "none")}
-                className="w-60 h-60 object-cover"
-              />
-              <p className="text-amber-300 text-xs font-bold">{blog.title}</p>
-              <p className="text-amber-300 text-xs">
-                Written by {blog.creatorFirstName} {blog.creatorLastName}
-              </p>
-              <div className="flex justify-around">
-                <MapPin size={18} className="text-amber-500" />
-                <p className="text-xs text-amber-500">
-                  {cities.find((i) => i.cityId === blog.cityId)?.name}
-                </p>
-                <Clock size={18} className="text-amber-500" />
-                <p className="text-xs text-amber-500">
-                  {new Date(blog.creationDate).toLocaleDateString("en-NZ")}
-                </p>
-              </div>
-              <div className="flex flex-wrap text-white gap-2">
-                {blog.categoryIds.map((id) => (
-                  <p className="text-xxs bg-cyan-800 outline-1 outline-cyan-600  rounded-2xl">
-                    &nbsp;&nbsp;&nbsp;
-                    {categories.find((i) => i.categoryId === id)?.name}
-                    &nbsp;&nbsp;&nbsp;
-                  </p>
-                ))}
-              </div>
-              <p className="text-xs text-white">
-                {blog.numReactions} Reactions
-              </p>
-            </div>
+            <BlogDisplay blog={blog} categories={categories} cities={cities} />
           ))
         ) : (
           <p>No blogs</p>

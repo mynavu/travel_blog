@@ -1,8 +1,9 @@
-import { X } from "lucide-react";
+import { X, TriangleAlert } from "lucide-react";
 import { useState } from "react";
 import { path } from "../../App";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Grainient from "../Grainient";
 
 type DeleteBlogModalProps = {
   blogId: string | undefined;
@@ -40,37 +41,70 @@ export function DeleteBlogModal({
       onClick={() => setShowDeleteModal(false)}
     >
       <div
-        className="bg-teal-950 p-6 rounded-xl w-80 flex flex-col gap-4 text-white"
+        className="relative p-6 rounded-xl w-80 flex flex-col gap-4 text-white glass overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center">
-          <p className="text-amber-300 font-bold">Delete Blog</p>
-          <X
-            className="cursor-pointer"
-            onClick={() => setShowDeleteModal(false)}
+        <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
+          <Grainient
+            color1="#7e004f"
+            color2="#5e002b"
+            color3="#c52d6f"
+            timeSpeed={0.25}
+            colorBalance={0.09}
+            warpStrength={1}
+            warpFrequency={5}
+            warpSpeed={2.5}
+            warpAmplitude={50}
+            blendAngle={0}
+            blendSoftness={0.05}
+            rotationAmount={500}
+            noiseScale={2}
+            grainAmount={0.1}
+            grainScale={2}
+            grainAnimated={false}
+            contrast={1.5}
+            gamma={1}
+            saturation={1}
+            centerX={0}
+            centerY={0}
+            zoom={0.9}
           />
         </div>
 
-        <p className="text-sm">
-          Are you sure you want to delete this blog? This action cannot be
-          undone.
-        </p>
-
-        {error && <p className="text-red-400 text-xs">{error}</p>}
-
-        <div className="flex gap-2">
-          <button
-            className="flex-1 bg-teal-800 rounded p-1"
-            onClick={() => setShowDeleteModal(false)}
-          >
-            Cancel
-          </button>
-          <button
-            className="flex-1 bg-red-700 rounded p-1"
-            onClick={deleteBlog}
-          >
-            Delete
-          </button>
+        {/* content above grainient */}
+        <div
+          style={{ position: "relative", zIndex: 1 }}
+          className="flex flex-col gap-4"
+        >
+          <div className="flex justify-between items-center">
+            <div className="flex gap-4">
+              <p className="text-amber-300 font-bold">Delete Blog</p>
+              <TriangleAlert className="text-amber-300" />
+            </div>
+            <X
+              className="cursor-pointer"
+              onClick={() => setShowDeleteModal(false)}
+            />
+          </div>
+          <p className="text-sm">
+            Are you sure you want to delete this blog? This action cannot be
+            undone.
+          </p>
+          {error && <p className="text-red-400 text-xs">{error}</p>}
+          <div className="flex gap-2">
+            <button
+              className="flex-1 bg-teal-800/50 rounded p-1"
+              onClick={() => setShowDeleteModal(false)}
+            >
+              Cancel
+            </button>
+            <button
+              className="flex-1 bg-red-700/50 rounded p-1"
+              onClick={deleteBlog}
+            >
+              Delete
+            </button>
+          </div>
         </div>
       </div>
     </div>

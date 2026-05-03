@@ -16,10 +16,10 @@ export function CreateButton({ cookies }: CreateButtonProps) {
   return (
     <>
       <button
-        className="bg-cyan-500 fixed bottom-8 left-8 w-12 h-12 rounded-full text-white text-xl font-bold flex justify-center items-center z-50"
+        className="fixed bottom-8 left-8 w-12 h-12 rounded-full text-white text-xl font-bold flex justify-center items-center z-50 glass"
         onClick={() => setShowModal(true)}
       >
-        <Plus />
+        <Plus className="text-amber-300" />
       </button>
 
       {showModal && (

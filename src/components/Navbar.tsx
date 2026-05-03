@@ -1,5 +1,12 @@
 // U12
-import { TreePalm } from "lucide-react";
+import {
+  TreePalm,
+  Sun,
+  Telescope,
+  LogIn,
+  UserRoundPlus,
+  LogOut,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { path } from "../App";
 import axios from "axios";
@@ -45,32 +52,44 @@ export function Navbar({
   const navigate = useNavigate();
   return (
     <>
-      <div className="fixed top-0 left-0 right-0 flex bg-teal-950 justify-between items-center px-4 py-2 z-50">
+      <div className="fixed top-1 left-25 right-25 rounded-2xl flex bg-teal-950 justify-between items-center px-4 py-2 z-50 glass">
         <TreePalm className="text-amber-300" />
-        <div>
-          {isLoggedIn && (
-            <div>
-              <img
-                className="w-7 h-7 rounded-full object-cover"
-                src={`${path}/users/${cookies.userId}/image`}
-                onError={(e) => (e.currentTarget.src = defaultPfp)}
-                onClick={() => navigate(`/profile/${cookies.userId}`)}
-              />
-              <button
-                onClick={() => logOut()}
-                className="text-amber-300 text-sm"
-              >
-                Log Out
-              </button>
-            </div>
-          )}
-          {!isLoggedIn && (
-            <div className="flex gap-2">
+        <div className="flex">
+          <Sun className="text-amber-300" />
+          <p className="text-amber-300">Mode</p>
+        </div>
+        <div className="flex">
+          <Telescope className="text-amber-300" />
+          <p className="text-amber-300">Explore</p>
+        </div>
+        {isLoggedIn && (
+          <div className="flex">
+            <LogOut className="text-amber-300" />
+            <button onClick={() => logOut()} className="text-amber-300 text-sm">
+              Log Out
+            </button>
+          </div>
+        )}
+        {isLoggedIn && (
+          <img
+            className="w-7 h-7 rounded-full object-cover"
+            src={`${path}/users/${cookies.userId}/image`}
+            onError={(e) => (e.currentTarget.src = defaultPfp)}
+            onClick={() => navigate(`/profile/${cookies.userId}`)}
+          />
+        )}
+        {!isLoggedIn && (
+          <div className="flex gap-2">
+            <div className="flex">
+              <UserRoundPlus className="text-amber-300" />
               <button onClick={() => navigate(`/register`)}>Register</button>
+            </div>
+            <div className="flex">
+              <LogIn className="text-amber-300" />
               <button onClick={() => navigate(`/login`)}>Login</button>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </>
   );

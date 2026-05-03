@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { path } from "../../App";
 import axios from "axios";
 import type { City, Category } from "../../types";
+import Grainient from "../Grainient";
 
 type BlogModalProps = {
   mode: "create" | "edit";
@@ -140,7 +141,7 @@ export function BlogModal({
       onClick={() => setShowModal(false)}
     >
       <div
-        className="bg-teal-950 p-6 rounded-xl w-96 flex flex-col gap-4 text-white overflow-y-auto max-h-screen"
+        className=" p-6 rounded-xl w-96 flex flex-col gap-4 text-white overflow-y-auto max-h-screen glass"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center">
