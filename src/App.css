@@ -15,6 +15,7 @@ body {
   font-optical-sizing: auto;
   font-weight: 500;
   font-style: normal;
+  text-shadow: 0px 1px 0px var(--tw-text-shadow-color, rgb(0 0 0 / 0.15));
 }
 
 .glass {
@@ -30,7 +31,7 @@ body {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 182, 193, 0.3);
-  box-shadow: 0 4px 24px rgba(255, 100, 150, 0.2);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
 }
 
 .glass-teal {
@@ -38,7 +39,7 @@ body {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(0, 200, 200, 0.3);
-  box-shadow: 0 4px 24px rgba(0, 128, 128, 0.2);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
 }
 
 .glass-blue {
@@ -46,7 +47,7 @@ body {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(100, 180, 255, 0.3);
-  box-shadow: 0 4px 24px rgba(0, 100, 255, 0.2);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
 }
 
 .glass-yellow {
@@ -54,7 +55,7 @@ body {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 220, 100, 0.3);
-  box-shadow: 0 4px 24px rgba(200, 150, 0, 0.2);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
 }
 .counter {
   font-size: 16px;

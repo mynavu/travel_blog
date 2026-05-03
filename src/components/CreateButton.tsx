@@ -16,7 +16,7 @@ export function CreateButton({ cookies }: CreateButtonProps) {
   return (
     <>
       <button
-        className="fixed bottom-8 left-8 w-12 h-12 rounded-full text-white text-xl font-bold flex justify-center items-center z-50 glass"
+        className="fixed bottom-8 left-8 w-12 h-12 rounded-full text-white text-xl font-bold flex justify-center items-center z-50 glass cursor-pointer"
         onClick={() => setShowModal(true)}
       >
         <Plus className="text-amber-300" />

@@ -52,19 +52,19 @@ export function Navbar({
   const navigate = useNavigate();
   return (
     <>
-      <div className="fixed top-1 left-25 right-25 rounded-2xl flex bg-teal-950 justify-between items-center px-4 py-2 z-50 glass">
-        <TreePalm className="text-amber-300" />
-        <div className="flex">
-          <Sun className="text-amber-300" />
-          <p className="text-amber-300">Mode</p>
+      <div className="fixed top-3 left-25 right-25 rounded-2xl flex bg-teal-950 justify-between items-center px-4 py-1.5 z-50 glass">
+        <TreePalm className="text-amber-300" size={25} />
+        <div className="flex items-center gap-1">
+          <Sun className="text-amber-300" size={18} />
+          <p className="text-amber-300 text-sm">Mode</p>
         </div>
-        <div className="flex">
-          <Telescope className="text-amber-300" />
-          <p className="text-amber-300">Explore</p>
+        <div className="flex items-center gap-1">
+          <Telescope className="text-amber-300" size={18} />
+          <p className="text-amber-300 text-sm">Explore</p>
         </div>
         {isLoggedIn && (
-          <div className="flex">
-            <LogOut className="text-amber-300" />
+          <div className="flex items-center gap-1">
+            <LogOut className="text-amber-300" size={18} />
             <button onClick={() => logOut()} className="text-amber-300 text-sm">
               Log Out
             </button>

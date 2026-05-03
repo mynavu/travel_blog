@@ -12,9 +12,13 @@ import {
   MessageCirclePlus,
   Trash,
   Pencil,
+  MapPin,
+  Clock,
+  Send,
+  ArrowUp,
 } from "lucide-react";
 import { useParams } from "react-router-dom";
-import type { Blog, Comment, Reaction } from "../types";
+import type { Blog, Comment, Reaction, City, Category } from "../types";
 import { path } from "../App";
 import axios from "axios";
 import defaultPfp from "../assets/default_pfp.png";
@@ -43,6 +47,8 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
   const [commentString, setCommentString] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [cities, setCities] = useState<City[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   const { id } = useParams();
 
@@ -56,6 +62,15 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
       console.log("COMMENTS", commentResult.data);
       const reactionResult = await axios.get(`${path}/blogs/${id}/react`);
       const reactionList: Reaction[] = reactionResult.data;
+
+      // GET CITIES AND BLOGS
+      const citiesResult = await axios.get(`${path}/blogs/cities`);
+      const citiesData = citiesResult.data as City[];
+      setCities(citiesData);
+
+      const categoriesResult = await axios.get(`${path}/blogs/categories`);
+      const categoriesData = categoriesResult.data as Category[];
+      setCategories(categoriesData);
 
       const reactionCount: Record<string, number> = {
         REACTION_1: 0,
@@ -173,7 +188,7 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
                   />
                 ) : userReaction === "REACTION_4" ? (
                   <ThumbsUp
-                    className="text-cyan-300"
+                    className="text-sky-300"
                     onClick={() => removeReaction("REACTION_4")}
                   />
                 ) : userReaction === "REACTION_5" ? (
@@ -182,11 +197,11 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
                     onClick={() => removeReaction("REACTION_5")}
                   />
                 ) : (
-                  <SmilePlus />
+                  <SmilePlus className="text-amber-300" />
                 )}
 
                 {isLoggedIn && showReactions && (
-                  <div className="absolute bottom-4 left-0 flex gap-2 bg-teal-900 p-2 rounded-xl z-50">
+                  <div className="absolute bottom-6 left-0 flex gap-2 rounded-xl rounded-bl-none z-50 glass">
                     <Smile
                       className="text-amber-300 cursor-pointer hover:scale-125 transition-transform"
                       onClick={() => reactToBlog("REACTION_1")}
@@ -200,7 +215,7 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
                       onClick={() => reactToBlog("REACTION_3")}
                     />
                     <ThumbsUp
-                      className="text-cyan-300 cursor-pointer hover:scale-125 transition-transform"
+                      className="text-sky-300 cursor-pointer hover:scale-125 transition-transform"
                       onClick={() => reactToBlog("REACTION_4")}
                     />
                     <Star
@@ -211,34 +226,33 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
                 )}
               </div>
               <div className="flex gap-2">
-                <div className="flex">
-                  <MessageCircle className="text-teal-500" />
-                  {comments.length /* change to num of unique commenters*/}
+                <div className="flex text-white gap-1">
+                  <MessageCircle className="text-sky-500" />
+                  {blog.numberOfUniqueCommenters}
                 </div>
                 {reactions.REACTION_1 > 0 && (
-                  <div className="flex">
+                  <div className="flex text-white gap-1">
                     <Smile className="text-amber-300" /> {reactions.REACTION_1}
                   </div>
                 )}
                 {reactions.REACTION_2 > 0 && (
-                  <div className="flex">
+                  <div className="flex text-white gap-1">
                     <PartyPopper className="text-purple-300" />
                     {reactions.REACTION_2}
                   </div>
                 )}
                 {reactions.REACTION_3 > 0 && (
-                  <div className="flex">
+                  <div className="flex text-white gap-1">
                     <Heart className="text-pink-300" /> {reactions.REACTION_3}
                   </div>
                 )}
                 {reactions.REACTION_4 > 0 && (
-                  <div className="flex">
-                    <ThumbsUp className="text-cyan-300" />{" "}
-                    {reactions.REACTION_4}
+                  <div className="flex text-white gap-1">
+                    <ThumbsUp className="text-sky-300" /> {reactions.REACTION_4}
                   </div>
                 )}
                 {reactions.REACTION_5 > 0 && (
-                  <div className="flex">
+                  <div className="flex text-white gap-1">
                     <Star className="text-yellow-200" /> {reactions.REACTION_5}
                   </div>
                 )}
@@ -247,10 +261,12 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
           </div>
         )}
 
+        {/* PART 2*/}
+
         {blog !== null && (
-          <div className="w-60 h-100 flex flex-col">
+          <div className="w-60 h-100 flex flex-col items-start bg-amber-300 w-60">
             <div className="flex">
-              <p className="text-amber-300">{blog?.title}</p>
+              <p className="text-white">{blog?.title}</p>
               {String(cookies.userId) === String(blog?.creatorId) && (
                 <>
                   <Pencil
@@ -264,21 +280,48 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
                 </>
               )}
             </div>
-            <div className="flex">
-              <p className="text-sm">
-                {blog?.creatorFirstName} {blog?.creatorLastName}
-              </p>
+            <p className="text-sm text-white">Series: {blog?.series}</p>
+            <div className="flex gap-2">
+              <div className="flex gap-1">
+                <MapPin size={15} className="text-white" />
+                <p className="text-xs text-white">
+                  {cities.find((i) => i.cityId === blog.cityId)?.name}
+                </p>
+              </div>
+              <div className="flex gap-1">
+                <Clock size={15} className="text-white" />
+                <p className="text-xs text-white">
+                  {new Date(blog.creationDate).toLocaleDateString("en-NZ")}
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-wrap text-white gap-2">
+              {blog.categoryIds.map((id) => (
+                <p className="text-xxs glass rounded-2xl">
+                  &nbsp;&nbsp;&nbsp;
+                  {categories.find((i) => i.categoryId === id)?.name}
+                  &nbsp;&nbsp;&nbsp;
+                </p>
+              ))}
+            </div>
+            <div className="flex gap-2">
               <img
-                className="w-7 h-7 rounded-full object-cover"
+                className="w-5 h-5 rounded-full object-cover"
                 src={`${path}/users/${blog?.creatorId}/image`}
                 onError={(e) => (e.currentTarget.src = defaultPfp)}
               />
+              <p className="text-sm text-white">
+                {blog?.creatorFirstName} {blog?.creatorLastName}
+              </p>
             </div>
-            <p>SERIES: {blog?.series}</p>
-            <p className="text-sm">{blog?.description}</p>
+            <p className="text-xs text-white">{blog?.description}</p>
+            <p className="text-sm">
+              {blog.numberOfUniqueCommenters} unique comments
+            </p>
+            <hr className="w-full border-white/20 border-t-1 border-solid mb-2" />
 
             {/* comments area */}
-            <div className="flex flex-col overflow-y-auto flex-1">
+            <div className="flex flex-col overflow-y-auto flex-1 gap-2 pb-2 w-60">
               {comments
                 .filter((comment) => comment.parentId === null)
                 .map((comment) => {
@@ -290,94 +333,125 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
                   );
 
                   return (
-                    <div
-                      key={comment.commentId}
-                      className="flex flex-col bg-amber-300"
-                    >
-                      <div className="flex flex-row">
+                    <div key={comment.commentId} className="flex flex-col ">
+                      <div className="flex flex-row glass rounded-2xl rounded-bl-none p-1">
                         <img
                           className="w-7 h-7 rounded-full object-cover"
                           src={`${path}/users/${comment.commenterId}/image`}
                           onError={(e) => (e.currentTarget.src = defaultPfp)}
                         />
-                        <div className="flex flex-col items-start">
-                          <p>
-                            {comment.commenterFirstName}{" "}
-                            {comment.commenterLastName}
-                          </p>
-                          <p>
-                            {new Date(comment.timestamp).toLocaleDateString(
-                              "en-NZ",
-                            )}
-                          </p>
-                          <p>{comment.comment}</p>
-                          <div
-                            className="flex items-center gap-1 cursor-pointer"
-                            onClick={() => toggleReplies(comment.commentId)}
-                          >
-                            <MessageCircle size={16} />
-                            <p>{replies.length}</p>
+                        <div className="flex flex-col items-start gap-1">
+                          <div className="flex flex-col items-start">
+                            <p className="text-xs text-white">
+                              {comment.commenterFirstName}{" "}
+                              {comment.commenterLastName}
+                            </p>
+                            <p className="text-xxs leading-2 text-white">
+                              {new Date(comment.timestamp).toLocaleDateString(
+                                "en-NZ",
+                              )}
+                            </p>
                           </div>
-                          <div
-                            className="flex items-center gap-1 cursor-pointer"
-                            onClick={() => setReplyComment(comment)}
-                          >
-                            <MessageCirclePlus size={16} />
-                            <button>Reply</button>
+                          <p className="text-white text-xs text-left w-full">
+                            {comment.comment}
+                          </p>
+                          <div className="flex gap-2">
+                            <div
+                              className="flex items-center gap-1 cursor-pointer"
+                              onClick={() => toggleReplies(comment.commentId)}
+                            >
+                              <MessageCircle size={16} className="text-white" />
+                              <p className="text-xs text-white">
+                                {replies.length}
+                              </p>
+                            </div>
+                            <div
+                              className="flex items-center gap-1 cursor-pointer"
+                              onClick={() => setReplyComment(comment)}
+                            >
+                              <MessageCirclePlus
+                                size={16}
+                                className="text-white"
+                              />
+                              <button className="text-xs text-white">
+                                Reply
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
-
-                      {isExpanded &&
-                        replies.map((childComment) => (
-                          <div
-                            key={childComment.commentId}
-                            className="flex bg-pink-600"
-                          >
-                            <img
-                              className="w-7 h-7 rounded-full object-cover"
-                              src={`${path}/users/${childComment.commenterId}/image`}
-                              onError={(e) =>
-                                (e.currentTarget.src = defaultPfp)
-                              }
-                            />
-                            <p>{childComment.comment}</p>
-                            <p>
-                              {childComment.commenterFirstName}{" "}
-                              {childComment.commenterLastName}
-                            </p>
-                            <p>
-                              {new Date(
-                                childComment.timestamp,
-                              ).toLocaleDateString("en-NZ")}
-                            </p>
-                          </div>
-                        ))}
+                      <div className="flex flex-col items-end mt-2 gap-2 w-60">
+                        {isExpanded &&
+                          replies.map((childComment) => (
+                            <div
+                              key={childComment.commentId}
+                              className="flex flex-col glass rounded-2xl rounded-br-none p-1 w-full"
+                            >
+                              <div className="flex flex-row">
+                                <img
+                                  className="w-7 h-7 rounded-full object-cover"
+                                  src={`${path}/users/${childComment.commenterId}/image`}
+                                  onError={(e) =>
+                                    (e.currentTarget.src = defaultPfp)
+                                  }
+                                />
+                                <div className="flex flex-col items-start gap-1">
+                                  <div className="flex flex-col items-start">
+                                    <p className="text-xs text-white">
+                                      {childComment.commenterFirstName}{" "}
+                                      {childComment.commenterLastName}
+                                    </p>
+                                    <p className="text-xxs leading-2 text-white">
+                                      {new Date(
+                                        childComment.timestamp,
+                                      ).toLocaleDateString("en-NZ")}
+                                    </p>
+                                  </div>
+                                  <p className="text-white text-xs text-left w-full">
+                                    <span className="text-amber-300">
+                                      @{comment.commenterFirstName}
+                                    </span>
+                                    &nbsp;
+                                    {childComment.comment}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
                     </div>
                   );
                 })}
             </div>
             {isLoggedIn && (
-              <div className="flex sticky bottom-0 bg-teal-900 pt-2">
-                {replyComment !== null && (
-                  <button onClick={() => setReplyComment(null)}>
-                    @{replyComment.commenterFirstName}{" "}
-                    {replyComment.commenterLastName}
-                  </button>
-                )}
-                <input
-                  className="bg-white flex-1"
-                  onChange={(e) => setCommentString(e.target.value)}
-                  value={commentString}
+              <div className="flex sticky bottom-0 glass rounded-2xl items-center p-1 w-60 mt-2">
+                <div className="flex flex-1 items-center min-w-0">
+                  {replyComment !== null && (
+                    <button
+                      onClick={() => setReplyComment(null)}
+                      className="glass rounded-2xl px-2 shrink-0 text-amber-300 text-sm"
+                    >
+                      @{replyComment.commenterFirstName}
+                    </button>
+                  )}
+
+                  <input
+                    className="flex-1 min-w-0 pl-2 outline-none focus:outline-none focus:ring-0 text-white text-sm"
+                    onChange={(e) => setCommentString(e.target.value)}
+                    value={commentString}
+                  />
+                </div>
+
+                <ArrowUp
+                  onClick={() => commentOnBlog()}
+                  size={25}
+                  className="glass rounded-2xl shrink-0 ml-2 text-white"
                 />
-                <MessageCirclePlus onClick={() => commentOnBlog()} />
               </div>
             )}
           </div>
         )}
       </div>
-
-      <p>Similar blogs</p>
     </div>
   );
 }

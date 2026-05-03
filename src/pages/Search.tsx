@@ -106,11 +106,11 @@ export function Search() {
 
   return (
     <div>
-      <div className="flex justify-around items-center mt-20">
+      <div className="flex justify-around items-center mt-18">
         <div>
           <p className="text-xs text-white">Sort</p>
           <select
-            className="text-xs bg-cyan-700 text-white w-30"
+            className="rounded-2xl glass text-white pl-1 text-xs pt-0.5 pb-0.5 w-50"
             onChange={(e) => setSort(e.target.value)}
           >
             <option value="ALPHABETICAL_ASC">
@@ -138,24 +138,24 @@ export function Search() {
           <p className="text-xs text-white">Min reaction</p>
           <input
             type="number"
-            className="bg-white w-20"
+            className="rounded-2xl glass text-white pl-1 text-sm w-20 focus:outline-white focus:outline"
             onChange={(e) => setReactionNum(Number(e.target.value))}
           />
         </div>
 
         {/* CITIES */}
         <div>
-          <p className="text-xs text-cyan-300">Cities</p>
+          <p className="text-xs text-sky-300">Cities</p>
           <input
             type="text"
-            className="bg-white"
+            className="rounded-2xl glass-blue text-white pl-1 text-sm focus:outline-sky-300 focus:outline"
             onChange={(e) => setCitySearch(e.target.value)}
             onFocus={() => setCityFocused(true)}
             onBlur={() => setTimeout(() => setCityFocused(false), 100)}
             value={citySearch}
           />
           {cityFocused && (
-            <div className="absolute z-50 bg-white text-black w-44 max-h-40 overflow-y-auto">
+            <div className="absolute z-50  text-white glass w-44 max-h-40 overflow-y-auto rounded-xl text-xs">
               {cities
                 .filter((city) =>
                   city.name.toLowerCase().startsWith(citySearch.toLowerCase()),
@@ -163,7 +163,7 @@ export function Search() {
                 .map((city) => (
                   <div
                     key={city.cityId}
-                    className="px-2 py-1 hover:bg-gray-200 cursor-pointer"
+                    className="px-2 py-1 hover:bg-sky-300/50 cursor-pointer"
                     onClick={() => {
                       if (!cityList.includes(city)) {
                         setCityList([...cityList, city]);
@@ -182,14 +182,14 @@ export function Search() {
           <p className="text-xs text-pink-300">Categories</p>
           <input
             type="text"
-            className="bg-white"
+            className="rounded-2xl glass-pink text-white pl-1 text-sm focus:outline-pink-300 focus:outline"
             onChange={(e) => setCategorySearch(e.target.value)}
             onFocus={() => setCategoryFocused(true)}
             onBlur={() => setTimeout(() => setCategoryFocused(false), 100)}
             value={categorySearch}
           />
           {categoryFocused && (
-            <div className="absolute z-50 bg-white text-black w-44 max-h-40 overflow-y-auto">
+            <div className="absolute z-50  text-white glass w-44 max-h-40 overflow-y-auto rounded-xl text-xs">
               {categories
                 .filter((category) =>
                   category.name
@@ -199,7 +199,7 @@ export function Search() {
                 .map((category) => (
                   <div
                     key={category.categoryId}
-                    className="px-2 py-1 hover:bg-gray-200 cursor-pointer"
+                    className="px-2 py-1 hover:bg-pink-300/50 cursor-pointer"
                     onClick={() => {
                       if (!categoryList.includes(category)) {
                         setCategoryList([...categoryList, category]);
@@ -218,7 +218,7 @@ export function Search() {
           <p className="text-xs text-amber-300">Keyword(s)</p>
           <input
             type="text"
-            className="bg-white"
+            className="rounded-2xl glass-yellow text-white pl-1 text-sm focus:outline-amber-300 focus:outline"
             onChange={(e) => setSearchString(e.target.value)}
           />
         </div>
@@ -227,12 +227,12 @@ export function Search() {
             setCurrentIndex(0);
             searchBlogs(0);
           }}
-          className="bg-cyan-400 text-sm p-1.5  text-cyan-800 font-bold rounded-2xl"
+          className="rounded-2xl glass text-white pl-1.5 pr-1.5 text-sm mt-3"
         >
-          SEARCH
+          Search
         </button>
       </div>
-      <div className="flex gap-2 mt-2">
+      <div className="flex gap-2 mt-2 justify-center flex-wrap">
         {cityList.map((city) => (
           <div
             key={city.cityId}
@@ -254,14 +254,9 @@ export function Search() {
             {category.name}
           </div>
         ))}
-        {searchString.length > 0 && (
-          <div className="text-xs text-white glass-yellow p-1 rounded-2xl cursor-pointer">
-            {searchString}
-          </div>
-        )}
       </div>
-      <div className="flex justify-between">
-        <p>{totalBlogNum} results found</p>
+      <div className="flex justify-between mt-1">
+        <p className="text-amber-300">{totalBlogNum} Results Found: </p>
       </div>
       <div className="flex justify-around gap-3 flex-wrap">
         {blogs.length ? (
@@ -313,9 +308,6 @@ export function Search() {
               }}
             >
               {Math.ceil(totalBlogNum / 8)}
-            </button>
-            <button>
-              <ArrowRight />
             </button>
           </>
         )}
