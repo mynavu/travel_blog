@@ -4,10 +4,12 @@ import { use, useEffect, useState } from "react";
 import axios from "axios";
 import defaultPfp from "../assets/default_pfp.png";
 import { path } from "../App";
-import type { Blog, User } from "../types";
+import type { Blog, User, Comment, Reaction, Category, City } from "../types";
 import { useNavigate } from "react-router-dom";
-import { Pencil } from "lucide-react";
+import { Pencil, LibraryBig, MessageCircle, Heart } from "lucide-react";
 import { EditProfileModal } from "../components/EditProfileModal";
+import { UserSeriesBlogs } from "../components/UserSeriesBlogs";
+import { UserInteractedBlogs } from "../components/UserInteractedBlogs";
 
 type ProfileProps = {
   cookies: { token?: any; userId?: any };
@@ -19,13 +21,29 @@ export function Profile({ cookies }: ProfileProps) {
   const [blogs, setBlogs] = useState<Record<string, Blog[]>>({});
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
+  const [commentedBlogs, setCommentedBlogs] = useState<Blog[]>([]);
+  const [reactedBlogs, setReactedBlogs] = useState<Blog[]>([]);
+  const [viewState, setViewState] = useState("series");
+  const [cities, setCities] = useState<City[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
     (async () => {
       try {
+        // PROFILE INFO
         const userResult = await axios.get(`${path}/users/${id}`);
-
         setProfile(userResult.data);
+
+        // CITIES AND CATEGORIES
+        const citiesResult = await axios.get(`${path}/blogs/cities`);
+        const citiesData = citiesResult.data as City[];
+        setCities(citiesData);
+
+        const categoriesResult = await axios.get(`${path}/blogs/categories`);
+        const categoriesData = categoriesResult.data as Category[];
+        setCategories(categoriesData);
+
+        // SERIES
         const seriesResult = await axios.get(`${path}/users/${id}/series`);
         const seriesList = seriesResult.data;
         setSeries(seriesList);
@@ -47,6 +65,45 @@ export function Profile({ cookies }: ProfileProps) {
           }
         }
         setBlogs(seriesMap);
+
+        // COMMENTS AND REACTIONS
+        const interactedResult = await axios.get(
+          `${path}/blogs?interactedByMe=true&count=100`,
+          {
+            headers: { "X-Authorization": cookies.token },
+          },
+        );
+        const interactedBlogs = interactedResult.data.blogs;
+
+        // fetch all reactions and comments in parallel
+        const [reactionsResults, commentsResults] = await Promise.all([
+          Promise.all(
+            interactedBlogs.map((blog: Blog) =>
+              axios.get(`${path}/blogs/${blog.blogId}/react`),
+            ),
+          ),
+          Promise.all(
+            interactedBlogs.map((blog: Blog) =>
+              axios.get(`${path}/blogs/${blog.blogId}/comments`),
+            ),
+          ),
+        ]);
+
+        const reactedBlogs: Blog[] = [];
+        const commentedBlogs: Blog[] = [];
+
+        interactedBlogs.forEach((blog: Blog, index: number) => {
+          const hasReacted = reactionsResults[index].data.some(
+            (r: Reaction) => r.userId === Number(cookies.userId),
+          );
+          const hasCommented = commentsResults[index].data.some(
+            (c: Comment) => c.commenterId === Number(cookies.userId),
+          );
+          if (hasReacted) reactedBlogs.push(blog);
+          if (hasCommented) commentedBlogs.push(blog);
+        });
+        setReactedBlogs(reactedBlogs);
+        setCommentedBlogs(commentedBlogs);
       } catch (e: any) {}
     })();
   }, [id]);
@@ -75,32 +132,26 @@ export function Profile({ cookies }: ProfileProps) {
         )}
       </div>
 
-      {Object.entries(blogs).map(([seriesName, seriesBlogs]) => (
-        <div key={seriesName}>
-          <p className="text-amber-300 font-bold mb-2">
-            {seriesName === "noSeries" ? "Other Posts" : seriesName}
-          </p>
-          <div className="flex flex-row gap-3 overflow-x-auto pb-2">
-            {seriesBlogs.map((blog) => (
-              <div
-                key={blog.blogId}
-                className="bg-teal-950 min-w-48 w-48 p-3 flex flex-col gap-1 cursor-pointer flex-shrink-0"
-                onClick={() => navigate(`/blog/${blog.blogId}`)}
-              >
-                <img
-                  src={`${path}/blogs/${blog.blogId}/image`}
-                  className="w-48 h-32 object-cover"
-                  onError={(e) => (e.currentTarget.style.display = "none")}
-                />
-                <p className="text-amber-300 text-xs font-bold">{blog.title}</p>
-                <p className="text-white text-xs">
-                  {blog.numReactions} reactions
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
+      <div className="flex">
+        <LibraryBig onClick={() => setViewState("series")} />
+        <MessageCircle onClick={() => setViewState("commented")} />
+        <Heart onClick={() => setViewState("reacted")} />
+      </div>
+      {viewState === "series" && <UserSeriesBlogs blogs={blogs} />}
+      {viewState === "commented" && (
+        <UserInteractedBlogs
+          blogs={commentedBlogs}
+          categories={categories}
+          cities={cities}
+        />
+      )}
+      {viewState === "reacted" && (
+        <UserInteractedBlogs
+          blogs={reactedBlogs}
+          categories={categories}
+          cities={cities}
+        />
+      )}
     </div>
   );
 }

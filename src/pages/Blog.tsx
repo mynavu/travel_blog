@@ -10,12 +10,15 @@ import {
   Star,
   MessageCircle,
   MessageCirclePlus,
+  Trash,
+  Pencil,
 } from "lucide-react";
 import { useParams } from "react-router-dom";
 import type { Blog, Comment, Reaction } from "../types";
 import { path } from "../App";
 import axios from "axios";
 import defaultPfp from "../assets/default_pfp.png";
+import { BlogModal } from "../components/modals/BlogModal";
 
 type BlogProps = {
   isLoggedIn: boolean;
@@ -37,6 +40,8 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
   const [expandedComments, setExpandedComments] = useState<number[]>([]);
   const [replyComment, setReplyComment] = useState<Comment | null>(null);
   const [commentString, setCommentString] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const { id } = useParams();
 
@@ -120,6 +125,14 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
 
   return (
     <div className="flex flex-col">
+      {showModal && (
+        <BlogModal
+          mode="edit"
+          blogId={id}
+          setShowModal={setShowModal}
+          cookies={cookies}
+        />
+      )}
       <div className="flex flex-row items-start justify-center gap-4 mt-25">
         {blog !== null && (
           <div className="flex flex-col w-100">
@@ -192,7 +205,7 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
               <div className="flex gap-2">
                 <div className="flex">
                   <MessageCircle className="text-teal-500" />
-                  {comments.length}
+                  {comments.length /* change to num of unique commenters*/}
                 </div>
                 {reactions.REACTION_1 > 0 && (
                   <div className="flex">
@@ -228,7 +241,21 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
 
         {blog !== null && (
           <div className="w-60 h-100 flex flex-col">
-            <p className="text-amber-300">{blog?.title}</p>
+            <div className="flex">
+              <p className="text-amber-300">{blog?.title}</p>
+              {String(cookies.userId) === String(blog?.creatorId) && (
+                <>
+                  <Pencil
+                    className="text-white"
+                    onClick={() => setShowModal(true)}
+                  />
+                  <Trash
+                    className="text-white"
+                    onClick={() => setShowDeleteModal(true)}
+                  />
+                </>
+              )}
+            </div>
             <div className="flex">
               <p className="text-sm">
                 {blog?.creatorFirstName} {blog?.creatorLastName}

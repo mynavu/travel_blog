@@ -2,6 +2,7 @@ import { X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { path } from "../App";
 import axios from "axios";
+import defaultPfp from "../assets/default_pfp.png";
 
 type EditProfileModalProps = {
   cookies: { token?: any; userId?: any };
@@ -20,6 +21,8 @@ export function EditProfileModal({
   const [newPassword, setNewPassword] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [changingPassword, setChangingPassword] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -30,16 +33,33 @@ export function EditProfileModal({
         setEmail(userData.data.email);
         setFirstName(userData.data.firstName);
         setLastName(userData.data.lastName);
+        setImagePreview(`${path}/users/${id}/image`);
       } catch (e) {
         console.log(e);
       }
     })();
   }, []);
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setImageFile(file);
+    if (file) {
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const toggleChangePassword = () => {
+    if (changingPassword) {
+      setNewPassword("");
+      setOldPassword("");
+    }
+    setChangingPassword(!changingPassword);
+  };
+
   const updateProfile = async () => {
     try {
       const body: any = { email, firstName, lastName };
-      if (newPassword) {
+      if (changingPassword && newPassword) {
         body.password = newPassword;
         body.currentPassword = oldPassword;
       }
@@ -66,6 +86,7 @@ export function EditProfileModal({
       await axios.delete(`${path}/users/${id}/image`, {
         headers: { "X-Authorization": cookies.token },
       });
+      setImagePreview(null);
       window.location.reload();
     } catch (e) {
       console.log(e);
@@ -78,12 +99,33 @@ export function EditProfileModal({
       onClick={() => setShowModal(false)}
     >
       <div
-        className="bg-teal-950 p-6 rounded-xl w-96 flex flex-col gap-4 text-white"
+        className="bg-teal-950 p-6 rounded-xl w-96 flex flex-col gap-4 text-white overflow-y-auto max-h-screen"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center">
           <p className="text-amber-300 font-bold">Edit Profile</p>
           <X className="cursor-pointer" onClick={() => setShowModal(false)} />
+        </div>
+
+        {/* Profile picture */}
+        <div className="flex flex-col items-center gap-2">
+          <img
+            className="w-20 h-20 rounded-full object-cover"
+            src={imagePreview || defaultPfp}
+            onError={(e) => (e.currentTarget.src = defaultPfp)}
+          />
+          <input
+            type="file"
+            accept="image/png, image/jpeg, image/gif"
+            className="bg-white text-black text-xs"
+            onChange={handleImageChange}
+          />
+          <button
+            className="bg-red-800 rounded p-1 text-sm w-full"
+            onClick={deletePhoto}
+          >
+            Delete Photo
+          </button>
         </div>
 
         <p>Email</p>
@@ -110,39 +152,33 @@ export function EditProfileModal({
           onChange={(e) => setLastName(e.target.value)}
         />
 
-        <p>Current Password</p>
-        <input
-          type="password"
-          className="bg-white text-black"
-          onChange={(e) => setOldPassword(e.target.value)}
-        />
-
-        <p>New Password</p>
-        <input
-          type="password"
-          className="bg-white text-black"
-          onChange={(e) => setNewPassword(e.target.value)}
-        />
-
-        <p>Profile Image</p>
-        <input
-          type="file"
-          accept="image/png, image/jpeg, image/gif"
-          className="bg-white text-black"
-          onChange={(e) => setImageFile(e.target.files?.[0] || null)}
-        />
-
         <button
-          className="bg-red-800 rounded p-1"
-          onClick={() => deletePhoto()}
+          className="bg-teal-700 rounded p-1 text-sm"
+          onClick={toggleChangePassword}
         >
-          Delete Photo
+          {changingPassword ? "Cancel" : "Change Password?"}
         </button>
 
-        <button
-          className="bg-cyan-800 rounded p-1"
-          onClick={() => updateProfile()}
-        >
+        {changingPassword && (
+          <>
+            <p>Current Password</p>
+            <input
+              type="password"
+              className="bg-white text-black"
+              value={oldPassword}
+              onChange={(e) => setOldPassword(e.target.value)}
+            />
+            <p>New Password</p>
+            <input
+              type="password"
+              className="bg-white text-black"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+          </>
+        )}
+
+        <button className="bg-cyan-800 rounded p-1" onClick={updateProfile}>
           Update
         </button>
       </div>
