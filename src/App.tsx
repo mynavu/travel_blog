@@ -27,6 +27,7 @@ function AppInner() {
   const location = useLocation();
   const navigate = useNavigate();
   const background = location.state?.background;
+  const [isNight, setIsNight] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -50,9 +51,9 @@ function AppInner() {
     <div style={{ position: "relative", minHeight: "100vh" }}>
       <div style={{ position: "fixed", inset: 0, zIndex: -1 }}>
         <Grainient
-          color1="#007498"
-          color2="#003b5e"
-          color3="#55b3ff"
+          color1={isNight ? "#003c5e" : "#007498"}
+          color2={isNight ? "#002e4a" : "#003b5e"}
+          color3={isNight ? "#0e538a" : "#55b3ff"}
           timeSpeed={0.25}
           colorBalance={0.09}
           warpStrength={1}
@@ -75,6 +76,7 @@ function AppInner() {
         />
       </div>
       <Navbar
+        setIsNight={setIsNight}
         isLoggedIn={isLoggedIn}
         setIsLoggedIn={setIsLoggedIn}
         cookies={cookies}
@@ -105,7 +107,11 @@ function AppInner() {
               element={
                 <div
                   className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-                  onClick={() => navigate(-1)}
+                  onClick={() =>
+                    navigate(background.pathname + background.search, {
+                      replace: true,
+                    })
+                  }
                 >
                   <div
                     className="bg-teal-950 rounded-xl overflow-hidden glass"

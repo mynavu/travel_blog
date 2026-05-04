@@ -112,7 +112,8 @@ export function Search() {
         <div>
           <p className="text-xs text-white">Sort</p>
           <select
-            className="rounded-2xl glass text-white pl-1 text-xs pt-0.5 pb-0.5 w-50"
+            defaultValue="CREATED_DESC"
+            className="rounded-2xl glass text-white pl-1 text-xs pt-0.5 pb-0.5 w-70 focus:outline-white focus:outline"
             onChange={(e) => setSort(e.target.value)}
           >
             <option value="ALPHABETICAL_ASC">
@@ -130,7 +131,7 @@ export function Search() {
             <option value="CREATED_ASC">
               Chronologically by creation date
             </option>
-            <option defaultValue="CREATED_DESC" value="CREATED_DESC">
+            <option value="CREATED_DESC">
               Reversed chronologically by creation date
             </option>
           </select>
@@ -140,6 +141,7 @@ export function Search() {
           <p className="text-xs text-white">Min reaction</p>
           <input
             type="number"
+            defaultValue={0}
             className="rounded-2xl glass text-white pl-1 text-sm w-20 focus:outline-white focus:outline"
             onChange={(e) => setReactionNum(Number(e.target.value))}
           />
@@ -150,14 +152,14 @@ export function Search() {
           <p className="text-xs text-sky-300">Cities</p>
           <input
             type="text"
-            className="rounded-2xl glass-blue text-white pl-1 text-sm focus:outline-sky-300 focus:outline"
+            className="rounded-2xl glass-blue text-white pl-1 w-30 text-sm focus:outline-sky-300 focus:outline"
             onChange={(e) => setCitySearch(e.target.value)}
             onFocus={() => setCityFocused(true)}
             onBlur={() => setTimeout(() => setCityFocused(false), 100)}
             value={citySearch}
           />
           {cityFocused && (
-            <div className="absolute z-50  text-white glass w-44 max-h-40 overflow-y-auto rounded-xl text-xs">
+            <div className="absolute z-50  text-white glass w-30 max-h-40 overflow-y-auto rounded-xl text-xs">
               {cities
                 .filter((city) =>
                   city.name.toLowerCase().startsWith(citySearch.toLowerCase()),
@@ -184,14 +186,14 @@ export function Search() {
           <p className="text-xs text-pink-300">Categories</p>
           <input
             type="text"
-            className="rounded-2xl glass-pink text-white pl-1 text-sm focus:outline-pink-300 focus:outline"
+            className="rounded-2xl glass-pink text-white pl-1 text-sm focus:outline-pink-300 focus:outline w-40"
             onChange={(e) => setCategorySearch(e.target.value)}
             onFocus={() => setCategoryFocused(true)}
             onBlur={() => setTimeout(() => setCategoryFocused(false), 100)}
             value={categorySearch}
           />
           {categoryFocused && (
-            <div className="absolute z-50  text-white glass w-44 max-h-40 overflow-y-auto rounded-xl text-xs">
+            <div className="absolute z-50  text-white glass w-40 max-h-40 overflow-y-auto rounded-xl text-xs">
               {categories
                 .filter((category) =>
                   category.name
@@ -229,7 +231,7 @@ export function Search() {
             setCurrentIndex(0);
             searchBlogs(0);
           }}
-          className="rounded-2xl glass text-white pl-1.5 pr-1.5 text-sm mt-3"
+          className="rounded-2xl glass text-white pl-1.5 pr-1.5 text-sm mt-3 cursor-pointer"
         >
           Search
         </button>
@@ -266,53 +268,72 @@ export function Search() {
             <BlogDisplay blog={blog} categories={categories} cities={cities} />
           ))
         ) : (
-          <p>No blogs</p>
+          <p className="text-white py-20">
+            There are no blogs that matches your search.
+          </p>
         )}
       </div>
-      <div className="flex justify-center gap-2 text-amber-500">
-        {/* PREV */}
-        {currentIndex >= 8 && (
-          <button
-            onClick={() => {
-              const newIndex = currentIndex - 8;
-              setCurrentIndex(newIndex);
-              searchBlogs(newIndex);
-            }}
-          >
-            {Math.ceil(currentIndex / 8)}
-          </button>
-        )}
-        {/* CURRENT */}
-        <button className="text-amber-300">
-          {Math.ceil(currentIndex / 8) + 1}
-        </button>
+      <div className="flex flex-col items-center gap-2 text-amber-500 my-7">
+        <div className="glass w-max px-2 rounded-2xl flex flex-row gap-3">
+          {/* FIRST */}
+          {currentIndex >= 16 && (
+            <>
+              <button
+                onClick={() => {
+                  setCurrentIndex(0);
+                  searchBlogs(0);
+                }}
+              >
+                1
+              </button>
+              <p>...</p>
+            </>
+          )}
 
-        {/* NEXT */}
-        {currentIndex + 8 < totalBlogNum && (
-          <button
-            onClick={() => {
-              const newIndex = currentIndex + 8;
-              setCurrentIndex(newIndex);
-              searchBlogs(newIndex);
-            }}
-          >
-            {Math.ceil(currentIndex / 8) + 2}
-          </button>
-        )}
-        {currentIndex + 16 < totalBlogNum && (
-          <>
-            <p>...</p>
+          {/* PREV */}
+          {currentIndex >= 8 && (
             <button
               onClick={() => {
-                const newIndex = (Math.ceil(totalBlogNum / 8) - 1) * 8;
+                const newIndex = currentIndex - 8;
                 setCurrentIndex(newIndex);
                 searchBlogs(newIndex);
               }}
             >
-              {Math.ceil(totalBlogNum / 8)}
+              {Math.ceil(currentIndex / 8)}
             </button>
-          </>
-        )}
+          )}
+          {/* CURRENT */}
+          <button className="text-amber-300">
+            {Math.ceil(currentIndex / 8) + 1}
+          </button>
+
+          {/* NEXT */}
+          {currentIndex + 8 < totalBlogNum && (
+            <button
+              onClick={() => {
+                const newIndex = currentIndex + 8;
+                setCurrentIndex(newIndex);
+                searchBlogs(newIndex);
+              }}
+            >
+              {Math.ceil(currentIndex / 8) + 2}
+            </button>
+          )}
+          {currentIndex + 16 < totalBlogNum && (
+            <>
+              <p>...</p>
+              <button
+                onClick={() => {
+                  const newIndex = (Math.ceil(totalBlogNum / 8) - 1) * 8;
+                  setCurrentIndex(newIndex);
+                  searchBlogs(newIndex);
+                }}
+              >
+                {Math.ceil(totalBlogNum / 8)}
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

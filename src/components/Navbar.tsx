@@ -22,6 +22,7 @@ type NavbarProps = {
     options?: CookieSetOptions | undefined,
   ) => void;
   cookies: { token?: any; userId?: any };
+  setIsNight: (value: boolean | ((prev: boolean) => boolean)) => void;
 };
 
 export function Navbar({
@@ -29,7 +30,10 @@ export function Navbar({
   setIsLoggedIn,
   removeCookie,
   cookies,
+  setIsNight,
 }: NavbarProps) {
+  const navigate = useNavigate();
+
   const logOut = async () => {
     try {
       await axios.post(
@@ -49,46 +53,58 @@ export function Navbar({
     }
   };
 
-  const navigate = useNavigate();
   return (
     <>
       <div className="fixed top-3 left-25 right-25 rounded-2xl flex bg-teal-950 justify-between items-center px-4 py-1.5 z-50 glass">
-        <TreePalm className="text-amber-300" size={25} />
-        <div className="flex items-center gap-1">
+        <TreePalm className="text-amber-300 amber-glow" size={25} />
+        <div
+          className="flex items-center gap-1 cursor-pointer"
+          onClick={() => setIsNight((prev: boolean) => !prev)}
+        >
           <Sun className="text-amber-300" size={18} />
           <p className="text-amber-300 text-sm">Mode</p>
         </div>
-        <div className="flex items-center gap-1">
+        <div
+          className="flex items-center gap-1 cursor-pointer"
+          onClick={() => navigate("/search")}
+        >
           <Telescope className="text-amber-300" size={18} />
           <p className="text-amber-300 text-sm">Explore</p>
         </div>
         {isLoggedIn && (
-          <div className="flex items-center gap-1">
+          <div
+            onClick={() => logOut()}
+            className="flex items-center gap-1 cursor-pointer"
+          >
             <LogOut className="text-amber-300" size={18} />
-            <button onClick={() => logOut()} className="text-amber-300 text-sm">
-              Log Out
-            </button>
+            <p className="text-amber-300 text-sm">Logout</p>
           </div>
         )}
         {isLoggedIn && (
           <img
-            className="w-7 h-7 rounded-full object-cover"
+            className="w-7 h-7 rounded-full object-cover cursor-pointer"
             src={`${path}/users/${cookies.userId}/image`}
             onError={(e) => (e.currentTarget.src = defaultPfp)}
             onClick={() => navigate(`/profile/${cookies.userId}`)}
           />
         )}
         {!isLoggedIn && (
-          <div className="flex gap-2">
-            <div className="flex">
-              <UserRoundPlus className="text-amber-300" />
-              <button onClick={() => navigate(`/register`)}>Register</button>
+          <>
+            <div
+              className="flex items-center gap-1 cursor-pointer"
+              onClick={() => navigate(`/register`)}
+            >
+              <UserRoundPlus className="text-amber-300" size={18} />
+              <p className="text-amber-300 text-sm">Register</p>
             </div>
-            <div className="flex">
-              <LogIn className="text-amber-300" />
-              <button onClick={() => navigate(`/login`)}>Login</button>
+            <div
+              className="flex items-center gap-1 cursor-pointer"
+              onClick={() => navigate(`/login`)}
+            >
+              <LogIn className="text-amber-300" size={18} />
+              <p className="text-amber-300 text-sm">Login</p>
             </div>
-          </div>
+          </>
         )}
       </div>
     </>

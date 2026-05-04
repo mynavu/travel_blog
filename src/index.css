@@ -49,6 +49,22 @@
   }
 }
 
+.amber-glow {
+  filter: drop-shadow(0 0 4px #ffcd2a);
+}
+.pink-glow {
+  filter: drop-shadow(0 0 4px #ff2cce);
+}
+.blue-glow {
+  filter: drop-shadow(0 0 4px #17aeff);
+}
+.purple-glow {
+  filter: drop-shadow(0 0 4px #bc1fff);
+}
+.yellow-glow {
+  filter: drop-shadow(0 0 4px #ffed29);
+}
+
 #root {
   width: 1126px;
   max-width: 100%;

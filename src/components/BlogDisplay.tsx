@@ -26,7 +26,7 @@ export function BlogDisplay({ blog, categories, cities }: BlogDisplayProps) {
       }}
       onClick={() =>
         navigate(`/blog/${blog.blogId}`, {
-          state: { background: location },
+          state: { background: location.state?.background || location },
         })
       }
     >
