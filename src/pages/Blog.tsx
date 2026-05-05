@@ -10,7 +10,6 @@ import { CommentSection } from "../components/blog_components/CommentSection";
 import { ReactionPanel } from "../components/blog_components/ReactionPanel";
 import { SimilarBlogsSideBar } from "../components/blog_components/SimilarBlogsSideBar";
 import { useBlog } from "../hooks/useBlog";
-import { useBlogReactions } from "../hooks/blog/useBlogReactions";
 import { useBlogComments } from "../hooks/blog/useBlogComments";
 import { useSimilarBlogs } from "../hooks/blog/useSimilarBlogs";
 import { useBlogMetadata } from "../hooks/useBlogMetadata";
@@ -23,10 +22,6 @@ type BlogProps = {
 export function Blog({ cookies, isLoggedIn }: BlogProps) {
   const { id } = useParams();
 
-  const [showReactions, setShowReactions] = useState(false);
-  const [expandedComments, setExpandedComments] = useState<number[]>([]);
-  const [replyComment, setReplyComment] = useState<Comment | null>(null);
-  const [commentString, setCommentString] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showAccessModal, setShowAccessModal] = useState(false);
@@ -38,24 +33,14 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
     cities,
     categories,
   );
+
   const { comments, commentOnBlog } = useBlogComments({
     id,
     cookies,
     refetchBlog,
   });
 
-  const { reactions, userReaction, reactToBlog, removeReaction } =
-    useBlogReactions({ id, cookies });
-
   const { similarBlogs } = useSimilarBlogs(id, blog, validCategories);
-
-  const toggleReplies = (commentId: number) => {
-    if (expandedComments.includes(commentId)) {
-      setExpandedComments(expandedComments.filter((id) => id !== commentId));
-    } else {
-      setExpandedComments([...expandedComments, commentId]);
-    }
-  };
 
   return (
     <div className="flex flex-col">
@@ -87,14 +72,9 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
             />
             <ReactionPanel
               cookies={cookies}
+              id={id}
               isLoggedIn={isLoggedIn}
-              setShowReactions={setShowReactions}
-              showReactions={showReactions}
-              removeReaction={removeReaction}
               blog={blog}
-              userReaction={userReaction}
-              reactions={reactions}
-              reactToBlog={reactToBlog}
               setShowAccessModal={setShowAccessModal}
             />
           </div>
@@ -113,13 +93,7 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
             />
             <CommentSection
               comments={comments}
-              expandedComments={expandedComments}
-              toggleReplies={toggleReplies}
-              setReplyComment={setReplyComment}
-              commentString={commentString}
-              setCommentString={setCommentString}
               commentOnBlog={commentOnBlog}
-              replyComment={replyComment}
               setShowAccessModal={setShowAccessModal}
               isLoggedIn={isLoggedIn}
             />

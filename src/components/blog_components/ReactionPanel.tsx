@@ -1,4 +1,6 @@
 import type { Blog } from "../../types";
+import { useState } from "react";
+import { useBlogReactions } from "../../hooks/blog/useBlogReactions";
 
 import {
   Smile,
@@ -11,34 +13,27 @@ import {
 } from "lucide-react";
 
 type ReactionPanelProps = {
-  cookies: { userId?: any };
+  cookies: { userId?: string };
+  id: string | undefined;
   isLoggedIn: boolean;
-  setShowReactions: (v: boolean) => void;
-  showReactions: boolean;
-  removeReaction: (v: string) => void;
   blog: Blog | null;
-  userReaction: string | null;
-  reactions: Record<string, number>;
-  reactToBlog: (v: string) => void;
   setShowAccessModal: (v: boolean) => void;
 };
 
 export function ReactionPanel({
   cookies,
+  id,
   isLoggedIn,
-  setShowReactions,
-  showReactions,
-  removeReaction,
   blog,
-  userReaction,
-  reactions,
-  reactToBlog,
   setShowAccessModal,
 }: ReactionPanelProps) {
+  // HOOKS
+  const { reactions, userReaction, reactToBlog, removeReaction } =
+    useBlogReactions({ id, cookies });
+  const [showReactions, setShowReactions] = useState(false);
+
   // CONDITIONS
   const canClick = String(cookies.userId) !== String(blog?.creatorId);
-  const canReact =
-    isLoggedIn && String(cookies.userId) !== String(blog?.creatorId);
 
   return (
     <>

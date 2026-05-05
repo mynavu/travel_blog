@@ -1,35 +1,35 @@
 import type { Comment } from "../../types";
 import path from "../../App";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import defaultPfp from "../../assets/default_pfp.png";
 import { MessageCircle, MessageCirclePlus, ArrowUp } from "lucide-react";
 
 type CommentSectionProps = {
   comments: Comment[];
-  expandedComments: number[];
-  toggleReplies: (v: number) => void;
-  setReplyComment: (v: Comment | null) => void;
-  commentString: string;
-  setCommentString: (v: string) => void;
   commentOnBlog: (v: string, v2: number | null) => void;
-  replyComment: Comment | null;
   setShowAccessModal: (v: boolean) => void;
   isLoggedIn: boolean;
 };
 
 export function CommentSection({
   comments,
-  expandedComments,
-  toggleReplies,
-  setReplyComment,
-  commentString,
-  setCommentString,
   commentOnBlog,
-  replyComment,
   setShowAccessModal,
   isLoggedIn,
 }: CommentSectionProps) {
   const navigate = useNavigate();
+  const [expandedComments, setExpandedComments] = useState<number[]>([]);
+  const [replyComment, setReplyComment] = useState<Comment | null>(null);
+  const [commentString, setCommentString] = useState("");
+
+  const toggleReplies = (commentId: number) => {
+    if (expandedComments.includes(commentId)) {
+      setExpandedComments(expandedComments.filter((id) => id !== commentId));
+    } else {
+      setExpandedComments([...expandedComments, commentId]);
+    }
+  };
 
   return (
     <>

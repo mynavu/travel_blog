@@ -1,7 +1,3 @@
-// U16
-import { use, useEffect, useState } from "react";
-import axios from "axios";
-import { path } from "../App";
 import type { Blog, User, Comment, Reaction, City, Category } from "../types";
 import { useNavigate, useLocation } from "react-router-dom";
 import { BlogDisplay } from "./BlogDisplay";
@@ -18,9 +14,6 @@ export function UserInteractedBlogs({
   cities,
   categories,
 }: UserInteractedBlogsProps) {
-  const navigate = useNavigate();
-  const location = useLocation();
-
   return (
     <div className="p-4 flex flex-col gap-6 ">
       <div className="flex justify-around gap-3 flex-wrap">

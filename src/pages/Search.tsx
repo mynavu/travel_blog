@@ -3,8 +3,6 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import type { Blog } from "../types";
 import { path } from "../App";
-import { ArrowRight, ArrowLeft, Clock, MapPin } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import type { City, Category } from "../types";
 import { BlogDisplay } from "../components/BlogDisplay";
@@ -29,13 +27,6 @@ export function Search() {
   const [cityFocused, setCityFocused] = useState(false);
   const [categoryFocused, setCategoryFocused] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  // Types
-
-  // Constants
 
   // Load data and populate blogs
   useEffect(() => {
@@ -106,6 +97,7 @@ export function Search() {
   return (
     <div>
       <div className="flex justify-around items-center mt-18">
+        {/* SORT */}
         <div>
           <p className="text-xs text-white">Sort</p>
           <select
@@ -133,6 +125,7 @@ export function Search() {
             </option>
           </select>
         </div>
+
         {/* MIN REACTION */}
         <div>
           <p className="text-xs text-white">Min reaction</p>
@@ -179,6 +172,8 @@ export function Search() {
             </div>
           )}
         </div>
+
+        {/* CATEGOREIS */}
         <div>
           <p className="text-xs text-pink-300">Categories</p>
           <input
@@ -215,6 +210,8 @@ export function Search() {
             </div>
           )}
         </div>
+
+        {/* KEYWORDS */}
         <div>
           <p className="text-xs text-amber-300">Keyword(s)</p>
           <input
@@ -223,6 +220,8 @@ export function Search() {
             onChange={(e) => setSearchString(e.target.value)}
           />
         </div>
+
+        {/* SEARCH BUTTON */}
         <button
           onClick={() => {
             setCurrentIndex(0);
@@ -233,6 +232,8 @@ export function Search() {
           Search
         </button>
       </div>
+
+      {/* SELECTED CITIES */}
       <div className="flex gap-2 mt-2 justify-center flex-wrap">
         {cityList.map((city) => (
           <div
@@ -244,6 +245,7 @@ export function Search() {
           </div>
         ))}
 
+        {/* SELECTED CATEGORIES */}
         {categoryList.map((category) => (
           <div
             key={category.categoryId}
@@ -256,6 +258,8 @@ export function Search() {
           </div>
         ))}
       </div>
+
+      {/* RESULTS */}
       <div className="flex justify-between mt-1">
         <p className="text-amber-300">{totalBlogNum} Results Found: </p>
       </div>
@@ -270,6 +274,8 @@ export function Search() {
           </p>
         )}
       </div>
+
+      {/* PAGINATION */}
       <div className="flex flex-col items-center gap-2 text-amber-500 my-7">
         <div className="glass w-max px-2 rounded-2xl flex flex-row gap-3">
           {/* FIRST */}
