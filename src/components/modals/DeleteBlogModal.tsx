@@ -26,6 +26,7 @@ export function DeleteBlogModal({
       });
       setShowDeleteModal(false);
       navigate("/search");
+      window.location.reload();
     } catch (e: any) {
       setError(
         e.response?.data?.message ||

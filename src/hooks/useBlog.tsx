@@ -26,6 +26,7 @@ export function useBlog(
 
     setValidCity(city || null);
     setValidCategories(cats);
+    console.log("BLOG:", blogData);
     // console.log("VALID CAT FROM USE BLOG:", validCategories);
   };
 

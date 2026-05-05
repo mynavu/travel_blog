@@ -27,8 +27,8 @@ export function Login({ setCookie, setIsLoggedIn }: LoginProps) {
         email,
         password,
       });
-      setCookie("token", result.data.token);
-      setCookie("userId", result.data.userId);
+      setCookie("token", result.data.token, { path: "/", maxAge: 86400 });
+      setCookie("userId", result.data.userId, { path: "/", maxAge: 86400 });
       setIsLoggedIn(true);
       navigate("/search");
     } catch (e: any) {

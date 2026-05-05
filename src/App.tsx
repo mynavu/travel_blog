@@ -31,6 +31,9 @@ function AppInner() {
 
   useEffect(() => {
     (async () => {
+      console.log("token:", cookies.token); // 👈 is this present after reload?
+      console.log("userId:", cookies.userId);
+
       try {
         const token = cookies.token;
         const userId = cookies.userId;

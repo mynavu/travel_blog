@@ -2,6 +2,7 @@ import { X } from "lucide-react";
 import { ProfileForm } from "../ProfileForm";
 import axios from "axios";
 import { path } from "../../App";
+import { useNavigate } from "react-router-dom";
 
 type EditProfileModalProps = {
   cookies: { token?: any; userId?: any };
@@ -20,6 +21,8 @@ export function EditProfileModal({
   id,
   user,
 }: EditProfileModalProps) {
+  const navigate = useNavigate();
+
   const updateProfile = async (data: {
     email: string;
     firstName: string;
@@ -56,6 +59,7 @@ export function EditProfileModal({
       }
 
       setShowModal(false);
+      navigate("/search");
       window.location.reload();
     } catch (e) {
       throw e;

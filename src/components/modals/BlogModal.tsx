@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { path } from "../../App";
 import axios from "axios";
 import type { City, Category } from "../../types";
-import Grainient from "../Grainient";
+import { useNavigate } from "react-router-dom";
 
 type BlogModalProps = {
   mode: "create" | "edit";
@@ -25,7 +25,7 @@ export function BlogModal({
   const [categorySearch, setCategorySearch] = useState("");
   const [categoryFocused, setCategoryFocused] = useState(false);
   const [cities, setCities] = useState<City[]>([]);
-  const [chosenCity, setChosenCity] = useState<number | null>(null);
+  const [chosenCity, setChosenCity] = useState<number | null>(3);
   const [series, setSeries] = useState("");
   const [existingSeries, setExistingSeries] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -33,6 +33,7 @@ export function BlogModal({
   const [seriesList, setSeriesList] = useState<string[]>([]);
   const [seriesFocused, setSeriesFocused] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -89,7 +90,13 @@ export function BlogModal({
   };
 
   const handleSubmit = async () => {
-    if (!title || !description || !chosenCity || categoryList.length === 0) {
+    if (
+      !title ||
+      !description ||
+      chosenCity === null ||
+      categoryList.length === 0 ||
+      !imagePreview
+    ) {
       setErrorMessage("Please fill out the required field");
       return;
     }
@@ -148,6 +155,7 @@ export function BlogModal({
       }
 
       setShowModal(false);
+      navigate("/search");
       window.location.reload();
     } catch (e: any) {
       setErrorMessage(e.response?.data);
@@ -257,7 +265,7 @@ export function BlogModal({
         <p>City</p>
         <select
           className="text-black"
-          value={chosenCity || ""}
+          value={chosenCity || 3}
           onChange={(e) => setChosenCity(Number(e.target.value))}
         >
           {cities.map((city) => (

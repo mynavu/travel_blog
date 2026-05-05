@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import defaultPfp from "../assets/default_pfp.png";
 
 type ProfileFormProps = {
@@ -34,8 +34,9 @@ export function ProfileForm({
     initialValues?.imagePreview ?? null,
   );
   const [showPassword, setShowPassword] = useState(false);
-  const [changingPassword, setChangingPassword] = useState(mode === "register");
+  const [changingPassword, setChangingPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const validate = () => {
     let allErrors = "";
@@ -54,7 +55,7 @@ export function ProfileForm({
       }
     }
 
-    if (changingPassword && currentPassword !== password) {
+    if (mode === "edit" && changingPassword && currentPassword !== password) {
       allErrors += " Old password and new password does not match.";
     }
 
@@ -184,6 +185,7 @@ export function ProfileForm({
         />
 
         <input
+          ref={fileInputRef}
           type="file"
           accept="image/png, image/jpeg, image/gif"
           className="bg-white text-black text-xs w-full"
@@ -196,6 +198,7 @@ export function ProfileForm({
             onClick={() => {
               setImageFile(null);
               setImagePreview(null);
+              if (fileInputRef.current) fileInputRef.current.value = "";
             }}
           >
             Remove

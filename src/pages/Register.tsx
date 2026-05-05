@@ -36,8 +36,8 @@ export function Register({ setCookie, setIsLoggedIn }: RegisterProps) {
         password: data.password,
       });
 
-      setCookie("token", result.data.token);
-      setCookie("userId", result.data.userId);
+      setCookie("token", result.data.token, { path: "/", maxAge: 86400 });
+      setCookie("userId", result.data.userId, { path: "/", maxAge: 86400 });
       setIsLoggedIn(true);
 
       if (data.imageFile) {
