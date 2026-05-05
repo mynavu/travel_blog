@@ -22,7 +22,7 @@ export function UserInteractedBlogs({
   const location = useLocation();
 
   return (
-    <div className="mt-20 p-4 flex flex-col gap-6 bg-green-400">
+    <div className="p-4 flex flex-col gap-6 ">
       <div className="flex justify-around gap-3 flex-wrap">
         {blogs.length ? (
           blogs.map((blog) => (

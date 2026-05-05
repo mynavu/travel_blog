@@ -19,22 +19,6 @@ export function DeleteBlogModal({
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const deleteBlog = async () => {
-    try {
-      await axios.delete(`${path}/blogs/${blogId}`, {
-        headers: { "X-Authorization": cookies.token },
-      });
-      setShowDeleteModal(false);
-      navigate("/search");
-    } catch (e: any) {
-      setError(
-        e.response?.data?.message ||
-          e.response?.data ||
-          "Failed to delete blog. It may have comments.",
-      );
-    }
-  };
-
   return (
     <div
       className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
@@ -46,9 +30,9 @@ export function DeleteBlogModal({
       >
         <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
           <Grainient
-            color1="#7e004f"
-            color2="#5e002b"
-            color3="#c52d6f"
+            color1={"#007498"}
+            color2={"#003b5e"}
+            color3={"#55b3ff"}
             timeSpeed={0.25}
             colorBalance={0.09}
             warpStrength={1}
@@ -87,8 +71,7 @@ export function DeleteBlogModal({
             />
           </div>
           <p className="text-sm">
-            Are you sure you want to delete this blog? This action cannot be
-            undone.
+            To interact with blog posts, you must Log In or Register an account.
           </p>
           {error && <p className="text-red-400 text-xs">{error}</p>}
           <div className="flex gap-2">
@@ -96,13 +79,10 @@ export function DeleteBlogModal({
               className="flex-1 glass rounded p-1"
               onClick={() => setShowDeleteModal(false)}
             >
-              Cancel
+              Login
             </button>
-            <button
-              className="flex-1 bg-amber-300 rounded p-1 text-rose-900"
-              onClick={deleteBlog}
-            >
-              Delete
+            <button className="flex-1 bg-amber-300 rounded p-1 text-rose-900">
+              Register
             </button>
           </div>
         </div>

@@ -49,7 +49,8 @@ export function Navbar({
       removeCookie("token", { path: "/" });
       removeCookie("userId", { path: "/" });
       setIsLoggedIn(false);
-      navigate("/search");
+
+      window.location.reload();
     }
   };
 

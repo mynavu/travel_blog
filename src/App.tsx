@@ -97,7 +97,12 @@ function AppInner() {
               <Login setIsLoggedIn={setIsLoggedIn} setCookie={setCookie} />
             }
           />
-          <Route path="/register" element={<Register />} />
+          <Route
+            path="/register"
+            element={
+              <Register setCookie={setCookie} setIsLoggedIn={setIsLoggedIn} />
+            }
+          />
           <Route path="*" />
         </Routes>
         {background && (

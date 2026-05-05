@@ -38,19 +38,29 @@ export function Login({ setCookie, setIsLoggedIn }: LoginProps) {
   };
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-      <p>Log In</p>
-      <input
-        className="bg-white"
-        type="text"
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        className="bg-white"
-        type="password"
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button onClick={() => logIn()}>Submit</button>
-      <p>{errorMessage !== null && errorMessage}</p>
+      <div className="glass p-5 rounded-2xl flex flex-col gap-2 text-white text-sm items-center">
+        <p>Log In</p>
+        <div className="flex gap-2">
+          <p>Email: </p>
+          <input
+            className="bg-white glass rounded-2xl"
+            type="text"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        <div className="flex gap-2">
+          <p>Password: </p>
+          <input
+            className="bg-white glass rounded-2xl"
+            type="password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        <button className="glass px-2 rounded-2xl" onClick={() => logIn()}>
+          Submit
+        </button>
+        <p>{errorMessage !== null && errorMessage}</p>
+      </div>
     </div>
   );
 }

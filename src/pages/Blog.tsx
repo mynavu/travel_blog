@@ -54,6 +54,8 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
   const [validCategories, setValidCategories] = useState<Category[]>([]);
   const [similarBlogs, setSimilarBlogs] = useState<Blog[]>([]);
 
+  const navigate = useNavigate();
+
   const { id } = useParams();
 
   useEffect(() => {
@@ -227,70 +229,71 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
               className="w-100 h-100 object-cover"
             />
             <div
-              className={`flex mt-2 ${isLoggedIn ? "justify-between" : "justify-end"}`}
+              className={`flex mt-2 ${isLoggedIn && String(cookies.userId) !== String(blog?.creatorId) ? "justify-between" : "justify-end"}`}
             >
-              {isLoggedIn && (
-                <div
-                  className="relative"
-                  onMouseEnter={() => setShowReactions(true)}
-                  onMouseLeave={() => setShowReactions(false)}
-                >
-                  {userReaction === "REACTION_1" ? (
-                    <Smile
-                      className="text-amber-300 amber-glow"
-                      onClick={() => removeReaction("REACTION_1")}
-                    />
-                  ) : userReaction === "REACTION_2" ? (
-                    <PartyPopper
-                      className="text-purple-300 purple-glow"
-                      onClick={() => removeReaction("REACTION_2")}
-                    />
-                  ) : userReaction === "REACTION_3" ? (
-                    <Heart
-                      className="text-pink-300 pink-glow"
-                      onClick={() => removeReaction("REACTION_3")}
-                    />
-                  ) : userReaction === "REACTION_4" ? (
-                    <ThumbsUp
-                      className="text-sky-300 blue-glow"
-                      onClick={() => removeReaction("REACTION_4")}
-                    />
-                  ) : userReaction === "REACTION_5" ? (
-                    <Star
-                      className="text-yellow-200 yellow-glow"
-                      onClick={() => removeReaction("REACTION_5")}
-                    />
-                  ) : (
-                    <SmilePlus className="text-amber-300" />
-                  )}
-
-                  {/* REACTIONS PANEL */}
-                  {showReactions && (
-                    <div className="absolute bottom-6 left-0 flex gap-2 rounded-xl rounded-bl-none z-50 glass p-1">
+              {isLoggedIn &&
+                String(cookies.userId) !== String(blog?.creatorId) && (
+                  <div
+                    className="relative"
+                    onMouseEnter={() => setShowReactions(true)}
+                    onMouseLeave={() => setShowReactions(false)}
+                  >
+                    {userReaction === "REACTION_1" ? (
                       <Smile
-                        className="text-amber-300 cursor-pointer hover:scale-125 transition-transform amber-glow"
-                        onClick={() => reactToBlog("REACTION_1")}
+                        className="text-amber-300 amber-glow"
+                        onClick={() => removeReaction("REACTION_1")}
                       />
+                    ) : userReaction === "REACTION_2" ? (
                       <PartyPopper
-                        className="text-purple-300 cursor-pointer hover:scale-125 transition-transform purple-glow"
-                        onClick={() => reactToBlog("REACTION_2")}
+                        className="text-purple-300 purple-glow"
+                        onClick={() => removeReaction("REACTION_2")}
                       />
+                    ) : userReaction === "REACTION_3" ? (
                       <Heart
-                        className="text-pink-300 cursor-pointer hover:scale-125 transition-transform pink-glow"
-                        onClick={() => reactToBlog("REACTION_3")}
+                        className="text-pink-300 pink-glow"
+                        onClick={() => removeReaction("REACTION_3")}
                       />
+                    ) : userReaction === "REACTION_4" ? (
                       <ThumbsUp
-                        className="text-sky-300 cursor-pointer hover:scale-125 transition-transform blue-glow"
-                        onClick={() => reactToBlog("REACTION_4")}
+                        className="text-sky-300 blue-glow"
+                        onClick={() => removeReaction("REACTION_4")}
                       />
+                    ) : userReaction === "REACTION_5" ? (
                       <Star
-                        className="text-yellow-200 cursor-pointer hover:scale-125 transition-transform yellow-glow"
-                        onClick={() => reactToBlog("REACTION_5")}
+                        className="text-yellow-200 yellow-glow"
+                        onClick={() => removeReaction("REACTION_5")}
                       />
-                    </div>
-                  )}
-                </div>
-              )}
+                    ) : (
+                      <SmilePlus className="text-amber-300" />
+                    )}
+
+                    {/* REACTIONS PANEL */}
+                    {showReactions && (
+                      <div className="absolute bottom-6 left-0 flex gap-2 rounded-xl rounded-bl-none z-50 glass p-1">
+                        <Smile
+                          className="text-amber-300 cursor-pointer hover:scale-125 transition-transform amber-glow"
+                          onClick={() => reactToBlog("REACTION_1")}
+                        />
+                        <PartyPopper
+                          className="text-purple-300 cursor-pointer hover:scale-125 transition-transform purple-glow"
+                          onClick={() => reactToBlog("REACTION_2")}
+                        />
+                        <Heart
+                          className="text-pink-300 cursor-pointer hover:scale-125 transition-transform pink-glow"
+                          onClick={() => reactToBlog("REACTION_3")}
+                        />
+                        <ThumbsUp
+                          className="text-sky-300 cursor-pointer hover:scale-125 transition-transform blue-glow"
+                          onClick={() => reactToBlog("REACTION_4")}
+                        />
+                        <Star
+                          className="text-yellow-200 cursor-pointer hover:scale-125 transition-transform yellow-glow"
+                          onClick={() => reactToBlog("REACTION_5")}
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
               <div className="flex gap-2">
                 <div className="flex text-white gap-1">
                   <MessageCircle className="text-sky-500" />
@@ -375,6 +378,7 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
                 className="w-7 h-7 rounded-full object-cover"
                 src={`${path}/users/${blog?.creatorId}/image`}
                 onError={(e) => (e.currentTarget.src = defaultPfp)}
+                onClick={() => navigate(`/profile/${blog?.creatorId}`)}
               />
               <p className="text-sm text-white">
                 {blog?.creatorFirstName} {blog?.creatorLastName}
@@ -411,6 +415,9 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
                           className="w-7 h-7 rounded-full object-cover shrink-0"
                           src={`${path}/users/${comment.commenterId}/image`}
                           onError={(e) => (e.currentTarget.src = defaultPfp)}
+                          onClick={() =>
+                            navigate(`/profile/${comment.commenterId}`)
+                          }
                         />
                         <div className="flex flex-col items-start gap-1 min-w-0 flex-1">
                           <div className="flex flex-col items-start">
@@ -469,6 +476,11 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
                                 src={`${path}/users/${childComment.commenterId}/image`}
                                 onError={(e) =>
                                   (e.currentTarget.src = defaultPfp)
+                                }
+                                onClick={() =>
+                                  navigate(
+                                    `/profile/${childComment.commenterId}`,
+                                  )
                                 }
                               />
                               <div className="flex flex-col items-start gap-1 min-w-0 flex-1">

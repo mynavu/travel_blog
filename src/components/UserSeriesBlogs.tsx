@@ -20,23 +20,25 @@ export function UserSeriesBlogs({
   const location = useLocation();
 
   return (
-    <div className="mt-20 p-4 flex flex-col gap-6 bg-green-400">
-      {Object.entries(blogs).map(([seriesName, seriesBlogs]) => (
-        <div key={seriesName}>
-          <p className="text-amber-300 font-bold mb-2">
-            {seriesName === "noSeries" ? "Other Posts" : seriesName}
-          </p>
-          <div className="flex flex-row gap-3 overflow-x-auto pb-2">
-            {seriesBlogs.map((blog) => (
-              <BlogDisplay
-                blog={blog}
-                cities={cities}
-                categories={categories}
-              />
-            ))}
+    <div className="p-4 flex flex-col gap-6 ">
+      {Object.entries(blogs)
+        .filter(([, blogs]) => blogs.length > 0)
+        .map(([seriesName, seriesBlogs]) => (
+          <div key={seriesName}>
+            <p className="text-amber-300 font-bold mb-2">
+              {seriesName === "noSeries" ? "Other Posts" : seriesName}
+            </p>
+            <div className="flex flex-row gap-3 overflow-x-auto pb-2">
+              {seriesBlogs.map((blog) => (
+                <BlogDisplay
+                  blog={blog}
+                  cities={cities}
+                  categories={categories}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
     </div>
   );
 }

@@ -6,7 +6,7 @@ import defaultPfp from "../assets/default_pfp.png";
 import { path } from "../App";
 import type { Blog, User, Comment, Reaction, Category, City } from "../types";
 import { useNavigate } from "react-router-dom";
-import { Pencil, LibraryBig, MessageCircle, Heart } from "lucide-react";
+import { Pencil, Smile, LibraryBig, MessageCircle, Heart } from "lucide-react";
 import { EditProfileModal } from "../components/modals/EditProfileModal";
 import { UserSeriesBlogs } from "../components/UserSeriesBlogs";
 import { UserInteractedBlogs } from "../components/UserInteractedBlogs";
@@ -27,11 +27,15 @@ export function Profile({ cookies }: ProfileProps) {
   const [cities, setCities] = useState<City[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
 
+  const isOwner = String(cookies.userId) === id && profile?.email;
+
   useEffect(() => {
     (async () => {
       try {
         // PROFILE INFO
-        const userResult = await axios.get(`${path}/users/${id}`);
+        const userResult = await axios.get(`${path}/users/${id}`, {
+          headers: { "X-Authorization": cookies.token },
+        });
         setProfile(userResult.data);
 
         // CITIES AND CATEGORIES
@@ -111,31 +115,63 @@ export function Profile({ cookies }: ProfileProps) {
 
   return (
     <div className="mt-20 p-4 flex flex-col gap-6">
-      {showModal && (
+      {showModal && profile && (
         <EditProfileModal
           cookies={cookies}
           setShowModal={setShowModal}
           id={id as string}
+          user={profile}
         />
       )}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 glass p-2 rounded-2xl">
         <img
           className="w-12 h-12 rounded-full object-cover"
           src={`${path}/users/${id}/image`}
           onError={(e) => (e.currentTarget.src = defaultPfp)}
         />
-        <p className="text-white text-xl font-bold">
-          {profile.firstName} {profile.lastName}
-        </p>
-        {String(cookies.userId) === id && (
-          <Pencil className="text-white" onClick={() => setShowModal(true)} />
-        )}
+        <div>
+          <p className="text-white text-xl font-bold">
+            {profile.firstName} {profile.lastName}
+          </p>
+          {isOwner && (
+            <div
+              className="glass flex items-center gap-1 rounded-2xl pl-2 cursor-pointer"
+              onClick={() => setShowModal(true)}
+            >
+              <Pencil className="text-white" size={20} />
+              <p className="text-white text-sm p-1">Edit</p>
+            </div>
+          )}
+        </div>
+        {isOwner && <div className="text-white">email: {profile.email}</div>}
       </div>
 
-      <div className="flex">
-        <LibraryBig onClick={() => setViewState("series")} />
-        <MessageCircle onClick={() => setViewState("commented")} />
-        <Heart onClick={() => setViewState("reacted")} />
+      <div className="flex glass text-white justify-around text-sm p-2 rounded-2xl">
+        <div
+          className="flex gap-1 cursor-pointer"
+          onClick={() => setViewState("series")}
+        >
+          <LibraryBig />
+          <p>Blogs by Series</p>
+        </div>
+        {isOwner && (
+          <>
+            <div
+              className="flex gap-1 cursor-pointer"
+              onClick={() => setViewState("commented")}
+            >
+              <MessageCircle />
+              <p>My Comments</p>
+            </div>
+            <div
+              className="flex gap-1 cursor-pointer"
+              onClick={() => setViewState("reacted")}
+            >
+              <Smile />
+              <p>My Reactions</p>
+            </div>
+          </>
+        )}
       </div>
       {viewState === "series" && (
         <UserSeriesBlogs
