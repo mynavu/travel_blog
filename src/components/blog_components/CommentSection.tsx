@@ -11,8 +11,10 @@ type CommentSectionProps = {
   setReplyComment: (v: Comment | null) => void;
   commentString: string;
   setCommentString: (v: string) => void;
-  commentOnBlog: () => void;
+  commentOnBlog: (v: string, v2: number | null) => void;
   replyComment: Comment | null;
+  setShowAccessModal: (v: boolean) => void;
+  isLoggedIn: boolean;
 };
 
 export function CommentSection({
@@ -24,6 +26,8 @@ export function CommentSection({
   setCommentString,
   commentOnBlog,
   replyComment,
+  setShowAccessModal,
+  isLoggedIn,
 }: CommentSectionProps) {
   const navigate = useNavigate();
 
@@ -69,6 +73,8 @@ export function CommentSection({
                         <MessageCircle size={16} className="text-white" />
                         <p className="text-xs text-white">{replies.length}</p>
                       </div>
+
+                      {/* REPLY COMMENT */}
                       <div
                         className="flex items-center gap-1 cursor-pointer"
                         onClick={() => setReplyComment(comment)}
@@ -143,7 +149,15 @@ export function CommentSection({
           />
         </div>
         <ArrowUp
-          onClick={() => commentOnBlog()}
+          onClick={() => {
+            if (isLoggedIn) {
+              commentOnBlog(commentString, replyComment?.commentId ?? null);
+              setCommentString("");
+              setReplyComment(null);
+            } else {
+              setShowAccessModal(true);
+            }
+          }}
           size={25}
           className="glass rounded-2xl shrink-0 ml-2 text-white cursor-pointer"
         />

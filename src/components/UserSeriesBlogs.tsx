@@ -1,9 +1,4 @@
-// U16
-import { use, useEffect, useState } from "react";
-import axios from "axios";
-import { path } from "../App";
 import type { Blog, User, Comment, Reaction, City, Category } from "../types";
-import { useNavigate, useLocation } from "react-router-dom";
 import { BlogDisplay } from "./BlogDisplay";
 
 type UserSeriesBlogsProps = {
@@ -16,9 +11,6 @@ export function UserSeriesBlogs({
   categories,
   cities,
 }: UserSeriesBlogsProps) {
-  const navigate = useNavigate();
-  const location = useLocation();
-
   return (
     <div className="p-4 flex flex-col gap-6 ">
       {Object.entries(blogs)

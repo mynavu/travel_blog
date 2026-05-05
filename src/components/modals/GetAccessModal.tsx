@@ -1,7 +1,4 @@
 import { X, TriangleAlert } from "lucide-react";
-import { useState } from "react";
-import { path } from "../../App";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Grainient from "../Grainient";
 

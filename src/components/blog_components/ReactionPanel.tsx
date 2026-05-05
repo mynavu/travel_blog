@@ -20,6 +20,7 @@ type ReactionPanelProps = {
   userReaction: string | null;
   reactions: Record<string, number>;
   reactToBlog: (v: string) => void;
+  setShowAccessModal: (v: boolean) => void;
 };
 
 export function ReactionPanel({
@@ -32,8 +33,10 @@ export function ReactionPanel({
   userReaction,
   reactions,
   reactToBlog,
+  setShowAccessModal,
 }: ReactionPanelProps) {
   // CONDITIONS
+  const canClick = String(cookies.userId) !== String(blog?.creatorId);
   const canReact =
     isLoggedIn && String(cookies.userId) !== String(blog?.creatorId);
 
@@ -42,7 +45,7 @@ export function ReactionPanel({
       <div
         className={`flex mt-2 ${String(cookies.userId) !== String(blog?.creatorId) || !isLoggedIn ? "justify-between" : "justify-end"}`}
       >
-        {canReact && (
+        {canClick && (
           <div
             className="relative"
             onMouseEnter={() => setShowReactions(true)}
@@ -82,23 +85,43 @@ export function ReactionPanel({
               <div className="absolute bottom-6 left-0 flex gap-2 rounded-xl rounded-bl-none z-50 glass p-1">
                 <Smile
                   className="text-amber-300 cursor-pointer hover:scale-125 transition-transform amber-glow"
-                  onClick={() => reactToBlog("REACTION_1")}
+                  onClick={() =>
+                    isLoggedIn
+                      ? reactToBlog("REACTION_1")
+                      : setShowAccessModal(true)
+                  }
                 />
                 <PartyPopper
                   className="text-purple-300 cursor-pointer hover:scale-125 transition-transform purple-glow"
-                  onClick={() => reactToBlog("REACTION_2")}
+                  onClick={() =>
+                    isLoggedIn
+                      ? reactToBlog("REACTION_2")
+                      : setShowAccessModal(true)
+                  }
                 />
                 <Heart
                   className="text-pink-300 cursor-pointer hover:scale-125 transition-transform pink-glow"
-                  onClick={() => reactToBlog("REACTION_3")}
+                  onClick={() =>
+                    isLoggedIn
+                      ? reactToBlog("REACTION_3")
+                      : setShowAccessModal(true)
+                  }
                 />
                 <ThumbsUp
                   className="text-sky-300 cursor-pointer hover:scale-125 transition-transform blue-glow"
-                  onClick={() => reactToBlog("REACTION_4")}
+                  onClick={() =>
+                    isLoggedIn
+                      ? reactToBlog("REACTION_4")
+                      : setShowAccessModal(true)
+                  }
                 />
                 <Star
                   className="text-yellow-200 cursor-pointer hover:scale-125 transition-transform yellow-glow"
-                  onClick={() => reactToBlog("REACTION_5")}
+                  onClick={() =>
+                    isLoggedIn
+                      ? reactToBlog("REACTION_5")
+                      : setShowAccessModal(true)
+                  }
                 />
               </div>
             )}
