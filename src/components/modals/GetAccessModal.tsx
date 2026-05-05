@@ -5,24 +5,17 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Grainient from "../Grainient";
 
-type DeleteBlogModalProps = {
-  blogId: string | undefined;
-  cookies: { token?: any; userId?: any };
-  setShowDeleteModal: (value: boolean) => void;
+type GetAccessModalProps = {
+  setShowAccessModal: (value: boolean) => void;
 };
 
-export function DeleteBlogModal({
-  blogId,
-  cookies,
-  setShowDeleteModal,
-}: DeleteBlogModalProps) {
-  const [error, setError] = useState<string | null>(null);
+export function GetAccessModal({ setShowAccessModal }: GetAccessModalProps) {
   const navigate = useNavigate();
 
   return (
     <div
       className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-      onClick={() => setShowDeleteModal(false)}
+      onClick={() => setShowAccessModal(false)}
     >
       <div
         className="relative p-6 rounded-xl w-80 flex flex-col gap-4 text-white glass overflow-hidden"
@@ -62,26 +55,28 @@ export function DeleteBlogModal({
         >
           <div className="flex justify-between items-center">
             <div className="flex gap-4">
-              <p className="text-amber-300 font-bold">Delete Blog</p>
+              <p className="text-amber-300 font-bold">Please log in first</p>
               <TriangleAlert className="text-amber-300" />
             </div>
             <X
               className="cursor-pointer"
-              onClick={() => setShowDeleteModal(false)}
+              onClick={() => setShowAccessModal(false)}
             />
           </div>
           <p className="text-sm">
             To interact with blog posts, you must Log In or Register an account.
           </p>
-          {error && <p className="text-red-400 text-xs">{error}</p>}
           <div className="flex gap-2">
             <button
-              className="flex-1 glass rounded p-1"
-              onClick={() => setShowDeleteModal(false)}
+              className="flex-1 glass rounded p-1 cursor-pointer"
+              onClick={() => navigate("/login")}
             >
               Login
             </button>
-            <button className="flex-1 bg-amber-300 rounded p-1 text-rose-900">
+            <button
+              className="flex-1 bg-amber-300 rounded p-1 text-blue-900 cursor-pointer"
+              onClick={() => navigate("/register")}
+            >
               Register
             </button>
           </div>

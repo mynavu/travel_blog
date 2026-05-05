@@ -61,7 +61,7 @@ export function Register({ setCookie, setIsLoggedIn }: RegisterProps) {
 
   return (
     <div className="mt-20 glass">
-      <ProfileForm mode="register" onSubmit={register} />;
+      <ProfileForm mode="register" onSubmit={register} />
     </div>
   );
 }

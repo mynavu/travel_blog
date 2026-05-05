@@ -111,7 +111,8 @@ export function Profile({ cookies }: ProfileProps) {
       } catch (e: any) {}
     })();
   }, [id]);
-  if (!profile) return <p>Loading...</p>;
+
+  if (!profile) return;
 
   return (
     <div className="mt-20 p-4 flex flex-col gap-6">

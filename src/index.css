@@ -65,6 +65,10 @@
   filter: drop-shadow(0 0 4px #ffed29);
 }
 
+button {
+  cursor: pointer;
+}
+
 #root {
   width: 1126px;
   max-width: 100%;

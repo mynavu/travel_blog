@@ -30,6 +30,9 @@ export function BlogModal({
   const [existingSeries, setExistingSeries] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [seriesList, setSeriesList] = useState<string[]>([]);
+  const [seriesFocused, setSeriesFocused] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -58,6 +61,20 @@ export function BlogModal({
             blog.categoryIds.includes(c.categoryId),
           );
           setCategoryList(existingCategories);
+
+          if (!blog.series) {
+            const seriesResult = await axios.get(
+              `${path}/users/${cookies.userId}/series`,
+            );
+            setSeriesList(seriesResult.data);
+          }
+        }
+
+        if (mode === "create") {
+          const seriesResult = await axios.get(
+            `${path}/users/${cookies.userId}/series`,
+          );
+          setSeriesList(seriesResult.data);
         }
       } catch (e) {
         console.log(e);
@@ -72,8 +89,10 @@ export function BlogModal({
   };
 
   const handleSubmit = async () => {
-    if (!title || !description || !chosenCity || categoryList.length === 0)
+    if (!title || !description || !chosenCity || categoryList.length === 0) {
+      setErrorMessage("Please fill out the required field");
       return;
+    }
 
     try {
       if (mode === "create") {
@@ -130,7 +149,8 @@ export function BlogModal({
 
       setShowModal(false);
       window.location.reload();
-    } catch (e) {
+    } catch (e: any) {
+      setErrorMessage(e.response?.data);
       console.log(e);
     }
   };
@@ -248,25 +268,54 @@ export function BlogModal({
         </select>
 
         {/* Series - show input if create mode, or edit mode with no existing series */}
-        {existingSeries ? (
+        {mode === "edit" && existingSeries ? (
           <p className="text-xs text-gray-400">
             Series: {existingSeries} (cannot be changed once set)
           </p>
         ) : (
           <>
             <p>Series</p>
-            <input
-              type="text"
-              className="bg-white text-black"
-              value={series}
-              onChange={(e) => setSeries(e.target.value)}
-            />
+            <div className="relative w-30">
+              <input
+                type="text"
+                className="rounded-2xl glass-blue text-white pl-1 w-30 text-sm focus:outline-sky-300 focus:outline"
+                onChange={(e) => setSeries(e.target.value)}
+                onFocus={() => setSeriesFocused(true)}
+                onBlur={() => setTimeout(() => setSeriesFocused(false), 100)}
+                value={series}
+              />
+              {seriesFocused && (
+                <div className="absolute z-50  text-white glass w-30 max-h-40 overflow-y-auto rounded-xl text-xs">
+                  {seriesList
+                    .filter(
+                      (s): s is string =>
+                        typeof s === "string" && s.trim() !== "",
+                    )
+                    .filter((s) =>
+                      s.toLowerCase().startsWith(series.toLowerCase()),
+                    )
+                    .map((s) => (
+                      <div
+                        key={s}
+                        className="px-2 py-1 hover:bg-sky-300/50 cursor-pointer"
+                        onClick={() => {
+                          setSeries(s);
+                          setSeriesFocused(false);
+                        }}
+                      >
+                        {s}
+                      </div>
+                    ))}
+                </div>
+              )}
+            </div>
           </>
         )}
 
         <button className="bg-cyan-800 rounded p-1" onClick={handleSubmit}>
           {mode === "create" ? "Post" : "Update"}
         </button>
+        <p>{errorMessage}</p>
       </div>
     </div>
   );

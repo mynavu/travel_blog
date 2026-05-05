@@ -1,0 +1,153 @@
+import type { Comment } from "../../types";
+import path from "../../App";
+import { useNavigate } from "react-router-dom";
+import defaultPfp from "../../assets/default_pfp.png";
+import { MessageCircle, MessageCirclePlus, ArrowUp } from "lucide-react";
+
+type CommentSectionProps = {
+  comments: Comment[];
+  expandedComments: number[];
+  toggleReplies: (v: number) => void;
+  setReplyComment: (v: Comment | null) => void;
+  commentString: string;
+  setCommentString: (v: string) => void;
+  commentOnBlog: () => void;
+  replyComment: Comment | null;
+};
+
+export function CommentSection({
+  comments,
+  expandedComments,
+  toggleReplies,
+  setReplyComment,
+  commentString,
+  setCommentString,
+  commentOnBlog,
+  replyComment,
+}: CommentSectionProps) {
+  const navigate = useNavigate();
+
+  return (
+    <>
+      {/* COMMENTS SECTION */}
+      <div className="flex flex-col overflow-y-auto flex-1 gap-2 pb-2 w-full">
+        {comments
+          .filter((comment) => comment.parentId === null)
+          .map((comment) => {
+            const replies = comments
+              .filter((child) => child.parentId === comment.commentId)
+              .reverse();
+            const isExpanded = expandedComments.includes(comment.commentId);
+            return (
+              <div key={comment.commentId} className="flex flex-col w-full">
+                <div className="flex flex-row glass rounded-2xl rounded-bl-none p-1 w-full gap-1">
+                  <img
+                    className="w-7 h-7 rounded-full object-cover shrink-0"
+                    src={`${path}/users/${comment.commenterId}/image`}
+                    onError={(e) => (e.currentTarget.src = defaultPfp)}
+                    onClick={() => navigate(`/profile/${comment.commenterId}`)}
+                  />
+                  <div className="flex flex-col items-start gap-1 min-w-0 flex-1">
+                    <div className="flex flex-col items-start">
+                      <p className="text-xs text-white">
+                        {comment.commenterFirstName} {comment.commenterLastName}
+                      </p>
+                      <p className="text-xxs leading-2 text-white">
+                        {new Date(comment.timestamp).toLocaleDateString(
+                          "en-NZ",
+                        )}
+                      </p>
+                    </div>
+                    <p className="text-white text-xs text-left w-full break-words">
+                      {comment.comment}
+                    </p>
+                    <div className="flex gap-2">
+                      <div
+                        className="flex items-center gap-1 cursor-pointer"
+                        onClick={() => toggleReplies(comment.commentId)}
+                      >
+                        <MessageCircle size={16} className="text-white" />
+                        <p className="text-xs text-white">{replies.length}</p>
+                      </div>
+                      <div
+                        className="flex items-center gap-1 cursor-pointer"
+                        onClick={() => setReplyComment(comment)}
+                      >
+                        <MessageCirclePlus size={16} className="text-white" />
+                        <button className="text-xs text-white">Reply</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* COMMENT REPLIES */}
+                {isExpanded && (
+                  <div className="flex flex-col items-end mt-2 gap-2 w-full">
+                    {replies.map((childComment) => (
+                      <div
+                        key={childComment.commentId}
+                        className="flex flex-row glass rounded-2xl rounded-br-none p-1 gap-1"
+                        style={{ maxWidth: "90%" }}
+                      >
+                        <img
+                          className="w-7 h-7 rounded-full object-cover shrink-0"
+                          src={`${path}/users/${childComment.commenterId}/image`}
+                          onError={(e) => (e.currentTarget.src = defaultPfp)}
+                          onClick={() =>
+                            navigate(`/profile/${childComment.commenterId}`)
+                          }
+                        />
+                        <div className="flex flex-col items-start gap-1 min-w-0 flex-1">
+                          <div className="flex flex-col items-start">
+                            <p className="text-xs text-white">
+                              {childComment.commenterFirstName}{" "}
+                              {childComment.commenterLastName}
+                            </p>
+                            <p className="text-xxs leading-2 text-white">
+                              {new Date(
+                                childComment.timestamp,
+                              ).toLocaleDateString("en-NZ")}
+                            </p>
+                          </div>
+                          <p className="text-white text-xs text-left w-full break-words">
+                            <span className="text-amber-300">
+                              @{comment.commenterFirstName}
+                            </span>
+                            &nbsp;{childComment.comment}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+      </div>
+
+      {/* COMMENT BAR*/}
+      <div className="flex sticky bottom-0 glass rounded-2xl items-center p-1 w-full mt-2">
+        <div className="flex flex-1 items-center min-w-0">
+          {replyComment !== null && (
+            <button
+              onClick={() => setReplyComment(null)}
+              className="glass rounded-2xl px-2 shrink-0 text-amber-300 text-sm"
+            >
+              @{replyComment.commenterFirstName}
+            </button>
+          )}
+          <input
+            className="flex-1 min-w-0 pl-2 outline-none focus:outline-none focus:ring-0 text-white text-sm bg-transparent"
+            onChange={(e) => setCommentString(e.target.value)}
+            value={commentString}
+          />
+        </div>
+        <ArrowUp
+          onClick={() => commentOnBlog()}
+          size={25}
+          className="glass rounded-2xl shrink-0 ml-2 text-white cursor-pointer"
+        />
+      </div>
+    </>
+  );
+}

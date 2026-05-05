@@ -22,12 +22,12 @@ export function Search() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [totalBlogNum, setTotalBlogNum] = useState(0);
-  const [citySearch, setCitySearch] = useState("");
   const [categorySearch, setCategorySearch] = useState("");
   const [categoryList, setCategoryList] = useState<Category[]>([]);
+  const [citySearch, setCitySearch] = useState("");
   const [cityList, setCityList] = useState<City[]>([]);
-  const [categoryFocused, setCategoryFocused] = useState(false);
   const [cityFocused, setCityFocused] = useState(false);
+  const [categoryFocused, setCategoryFocused] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const navigate = useNavigate();
