@@ -13,8 +13,9 @@ import { UserInteractedBlogs } from "../components/UserInteractedBlogs";
 
 type ProfileProps = {
   cookies: { token?: any; userId?: any };
+  authChecked: boolean;
 };
-export function Profile({ cookies }: ProfileProps) {
+export function Profile({ cookies, authChecked }: ProfileProps) {
   const { id } = useParams();
   const [profile, setProfile] = useState<User | null>(null);
   const [series, setSeries] = useState<string[]>([]);
@@ -27,59 +28,54 @@ export function Profile({ cookies }: ProfileProps) {
   const [cities, setCities] = useState<City[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
 
-  const isOwner = String(cookies.userId) === id && profile?.email;
+  const isOwner = String(cookies.userId) === id;
 
   useEffect(() => {
+    if (!id) return;
+    if (!authChecked) return;
+
     (async () => {
       try {
-        // PROFILE INFO
         const userResult = await axios.get(`${path}/users/${id}`, {
           headers: { "X-Authorization": cookies.token },
         });
         setProfile(userResult.data);
 
-        // CITIES AND CATEGORIES
         const citiesResult = await axios.get(`${path}/blogs/cities`);
-        const citiesData = citiesResult.data as City[];
-        setCities(citiesData);
+        setCities(citiesResult.data as City[]);
 
         const categoriesResult = await axios.get(`${path}/blogs/categories`);
-        const categoriesData = categoriesResult.data as Category[];
-        setCategories(categoriesData);
+        setCategories(categoriesResult.data as Category[]);
 
-        // SERIES
         const seriesResult = await axios.get(`${path}/users/${id}/series`);
-        const seriesList = seriesResult.data;
-        setSeries(seriesList);
+        setSeries(seriesResult.data);
+
         const blogsResult = await axios.get(`${path}/blogs`, {
           params: { creatorId: id },
         });
         const blogList = blogsResult.data.blogs;
 
         const seriesMap: Record<string, Blog[]> = { noSeries: [] };
-
         for (const blog of blogList) {
           if (!blog.series) {
             seriesMap["noSeries"] = [...seriesMap["noSeries"], blog];
           } else {
-            if (!seriesMap[blog.series]) {
-              seriesMap[blog.series] = [];
-            }
+            if (!seriesMap[blog.series]) seriesMap[blog.series] = [];
             seriesMap[blog.series] = [...seriesMap[blog.series], blog];
           }
         }
         setBlogs(seriesMap);
 
-        // COMMENTS AND REACTIONS
+        // ✅ Only fetch interacted blogs if this is the owner AND we have a valid token
+        const currentIsOwner = String(cookies.userId) === id;
+        if (!currentIsOwner || !cookies.token) return;
+
         const interactedResult = await axios.get(
           `${path}/blogs?interactedByMe=true&count=100`,
-          {
-            headers: { "X-Authorization": cookies.token },
-          },
+          { headers: { "X-Authorization": cookies.token } },
         );
         const interactedBlogs = interactedResult.data.blogs;
 
-        // fetch all reactions and comments in parallel
         const [reactionsResults, commentsResults] = await Promise.all([
           Promise.all(
             interactedBlogs.map((blog: Blog) =>
@@ -93,8 +89,8 @@ export function Profile({ cookies }: ProfileProps) {
           ),
         ]);
 
-        const reactedBlogs: Blog[] = [];
-        const commentedBlogs: Blog[] = [];
+        const newReactedBlogs: Blog[] = [];
+        const newCommentedBlogs: Blog[] = [];
 
         interactedBlogs.forEach((blog: Blog, index: number) => {
           const hasReacted = reactionsResults[index].data.some(
@@ -103,14 +99,17 @@ export function Profile({ cookies }: ProfileProps) {
           const hasCommented = commentsResults[index].data.some(
             (c: Comment) => c.commenterId === Number(cookies.userId),
           );
-          if (hasReacted) reactedBlogs.push(blog);
-          if (hasCommented) commentedBlogs.push(blog);
+          if (hasReacted) newReactedBlogs.push(blog);
+          if (hasCommented) newCommentedBlogs.push(blog);
         });
-        setReactedBlogs(reactedBlogs);
-        setCommentedBlogs(commentedBlogs);
-      } catch (e: any) {}
+
+        setReactedBlogs(newReactedBlogs);
+        setCommentedBlogs(newCommentedBlogs);
+      } catch (e: any) {
+        console.log("Profile fetch error:", e.response?.status, e.message);
+      }
     })();
-  }, [id]);
+  }, [id, authChecked, cookies.token, cookies.userId]); // ✅ added cookie deps
 
   if (!profile) return;
 

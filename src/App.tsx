@@ -21,34 +21,62 @@ import Grainient from "./components/Grainient";
 export const path = `http://localhost:4941/api/v1`;
 
 function AppInner() {
-  const [errorMessage, setErrorMessage] = useState(null);
   const [cookies, setCookie, removeCookie] = useCookies(["token", "userId"]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const background = location.state?.background;
   const [isNight, setIsNight] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      console.log("token:", cookies.token); // 👈 is this present after reload?
-      console.log("userId:", cookies.userId);
+    const checkAuth = async () => {
+      const token = cookies.token;
+      const userId = cookies.userId;
+
+      console.log("AUTH CHECK - token:", token, "userId:", userId);
+
+      if (!token || !userId) {
+        console.log("AUTH CHECK - no token/userId, setting logged out");
+        setIsLoggedIn(false);
+        setAuthChecked(true);
+        return;
+      }
 
       try {
-        const token = cookies.token;
-        const userId = cookies.userId;
-        if (!token || !userId) return;
+        console.log("AUTH CHECK - calling API...");
         const result = await axios.get(`${path}/users/${userId}`, {
           headers: { "X-Authorization": token },
         });
-        if (result.data.email) {
-          setIsLoggedIn(true);
-        }
-      } catch (e) {
-        console.log(e);
+        console.log(
+          "AUTH CHECK - response:",
+          result.data,
+          "status:",
+          result.status,
+        );
+        console.log("AUTH CHECK - has email:", !!result.data.email);
+        setIsLoggedIn(result.status === 200 && !!result.data.email);
+      } catch (e: any) {
+        console.log(
+          "AUTH CHECK - failed:",
+          e.response?.status,
+          e.response?.data,
+        );
+        setIsLoggedIn(false);
+        removeCookie("token");
+        removeCookie("userId");
+      } finally {
+        setAuthChecked(true);
+        console.log("AUTH CHECK - done, authChecked set to true");
       }
-    })();
-  }, []);
+    };
+
+    checkAuth();
+  }, [cookies.token, cookies.userId]);
+
+  console.log("RENDER - isLoggedIn:", isLoggedIn, "authChecked:", authChecked);
+
+  if (!authChecked) return null;
 
   return (
     <div style={{ position: "relative", minHeight: "100vh" }}>
@@ -89,7 +117,10 @@ function AppInner() {
       <div>
         <Routes location={background || location}>
           <Route path="/search" element={<Search />} />
-          <Route path="/profile/:id" element={<Profile cookies={cookies} />} />
+          <Route
+            path="/profile/:id"
+            element={<Profile cookies={cookies} authChecked={authChecked} />}
+          />
           <Route
             path="/blog/:id"
             element={<Blog cookies={cookies} isLoggedIn={isLoggedIn} />}
