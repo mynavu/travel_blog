@@ -3,6 +3,7 @@ import { ProfileForm } from "../ProfileForm";
 import axios from "axios";
 import { path } from "../../App";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 type EditProfileModalProps = {
   cookies: { token?: any; userId?: any };
@@ -22,6 +23,14 @@ export function EditProfileModal({
   user,
 }: EditProfileModalProps) {
   const navigate = useNavigate();
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  useEffect(() => {
+    fetch(`${path}/users/${id}/image`, { method: "HEAD" })
+      .then((res) =>
+        setImagePreview(res.ok ? `${path}/users/${id}/image` : null),
+      )
+      .catch(() => setImagePreview(null));
+  }, [id]);
 
   const updateProfile = async (data: {
     email: string;
@@ -30,6 +39,7 @@ export function EditProfileModal({
     password?: string;
     currentPassword?: string;
     imageFile?: File | null;
+    imagePreview?: string | null;
   }) => {
     try {
       const body: any = {
@@ -56,6 +66,12 @@ export function EditProfileModal({
             "Content-Type": data.imageFile.type,
           },
         });
+      } else if (imagePreview !== null && data.imagePreview === null) {
+        await axios.delete(`${path}/users/${id}/image`, {
+          headers: {
+            "X-Authorization": cookies.token,
+          },
+        });
       }
 
       setShowModal(false);
@@ -75,8 +91,7 @@ export function EditProfileModal({
         className="glass p-6 rounded-xl w-96 max-h-screen overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center mb-4">
-          <p className="text-amber-300 font-bold">Edit Profile</p>
+        <div className="flex justify-end items-center mb-4">
           <X
             className="cursor-pointer text-white"
             onClick={() => setShowModal(false)}
@@ -89,7 +104,7 @@ export function EditProfileModal({
             email: user.email,
             firstName: user.firstName,
             lastName: user.lastName,
-            imagePreview: `${path}/users/${id}/image`,
+            imagePreview,
           }}
           onSubmit={updateProfile}
         />

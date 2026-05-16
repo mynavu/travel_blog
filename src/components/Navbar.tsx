@@ -2,6 +2,7 @@
 import {
   TreePalm,
   Sun,
+  Moon,
   Telescope,
   LogIn,
   UserRoundPlus,
@@ -23,6 +24,7 @@ type NavbarProps = {
   ) => void;
   cookies: { token?: any; userId?: any };
   setIsNight: (value: boolean | ((prev: boolean) => boolean)) => void;
+  isNight: boolean;
 };
 
 export function Navbar({
@@ -31,6 +33,7 @@ export function Navbar({
   removeCookie,
   cookies,
   setIsNight,
+  isNight,
 }: NavbarProps) {
   const navigate = useNavigate();
 
@@ -59,9 +62,16 @@ export function Navbar({
         <TreePalm className="text-amber-300 amber-glow" size={25} />
         <div
           className="flex items-center gap-1 cursor-pointer"
-          onClick={() => setIsNight((prev: boolean) => !prev)}
+          onClick={() => {
+            setIsNight((prev: boolean) => !prev);
+            localStorage.setItem("isNight", String(!isNight));
+          }}
         >
-          <Sun className="text-amber-300" size={18} />
+          {isNight ? (
+            <Moon className="text-amber-300" size={18} />
+          ) : (
+            <Sun className="text-amber-300" size={18} />
+          )}
           <p className="text-amber-300 text-sm">Mode</p>
         </div>
         <div

@@ -76,11 +76,17 @@ export function CommentSection({
 
                       {/* REPLY COMMENT */}
                       <div
-                        className="flex items-center gap-1 cursor-pointer"
-                        onClick={() => setReplyComment(comment)}
+                        className={`flex items-center gap-1 cursor-pointer ${replyComment?.commentId == comment.commentId ? "text-amber-300" : "text-white"} hover:text-amber-300`}
+                        onClick={() =>
+                          isLoggedIn
+                            ? replyComment
+                              ? setReplyComment(null)
+                              : setReplyComment(comment)
+                            : setShowAccessModal(true)
+                        }
                       >
-                        <MessageCirclePlus size={16} className="text-white" />
-                        <button className="text-xs text-white">Reply</button>
+                        <MessageCirclePlus size={16} className="" />
+                        <button className="text-xs ">Reply</button>
                       </div>
                     </div>
                   </div>
@@ -137,7 +143,7 @@ export function CommentSection({
           {replyComment !== null && (
             <button
               onClick={() => setReplyComment(null)}
-              className="glass rounded-2xl px-2 shrink-0 text-amber-300 text-sm"
+              className="glass rounded-2xl px-2 shrink-0 text-amber-300 text-sm hover:text-gray-300"
             >
               @{replyComment.commenterFirstName}
             </button>

@@ -238,7 +238,7 @@ export function Search() {
         {cityList.map((city) => (
           <div
             key={city.cityId}
-            className="text-xs text-white glass-blue p-1 rounded-2xl cursor-pointer"
+            className="text-xs text-white glass-blue p-1 rounded-2xl cursor-pointer hover:line-through"
             onClick={() => setCityList(cityList.filter((i) => i !== city))}
           >
             {city.name}
@@ -249,7 +249,7 @@ export function Search() {
         {categoryList.map((category) => (
           <div
             key={category.categoryId}
-            className="text-xs text-white glass-pink p-1 rounded-2xl cursor-pointer"
+            className="text-xs text-white glass-pink p-1 rounded-2xl cursor-pointer hover:line-through"
             onClick={() =>
               setCategoryList(categoryList.filter((i) => i !== category))
             }
@@ -276,7 +276,7 @@ export function Search() {
       </div>
 
       {/* PAGINATION */}
-      <div className="flex flex-col items-center gap-2 text-amber-500 my-7">
+      <div className="flex flex-col items-center gap-2 text-white my-7">
         <div className="glass w-max px-2 rounded-2xl flex flex-row gap-3">
           {/* FIRST */}
           {currentIndex >= 16 && (

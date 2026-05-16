@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import defaultPfp from "../assets/default_pfp.png";
+import { Eye, EyeClosed } from "lucide-react";
 
 type ProfileFormProps = {
   mode: "register" | "edit";
@@ -16,6 +17,7 @@ type ProfileFormProps = {
     password?: string;
     currentPassword?: string;
     imageFile?: File | null;
+    imagePreview?: string | null;
   }) => Promise<void>;
 };
 
@@ -29,7 +31,7 @@ export function ProfileForm({
   const [lastName, setLastName] = useState(initialValues?.lastName ?? "");
   const [password, setPassword] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>();
   const [imagePreview, setImagePreview] = useState<string | null>(
     initialValues?.imagePreview ?? null,
   );
@@ -49,14 +51,25 @@ export function ProfileForm({
       allErrors += " Email is invalid.";
     }
 
+    if (
+      mode === "edit" &&
+      initialValues?.firstName === firstName &&
+      initialValues?.lastName === lastName &&
+      initialValues.email === email &&
+      !changingPassword
+    ) {
+      allErrors += " All information is identical to the previous one.";
+    }
+
     if (mode === "register" || changingPassword) {
       if (password.length < 6) {
         allErrors += " The password must be at least 6 characters in length.";
       }
     }
 
-    if (mode === "edit" && changingPassword && currentPassword !== password) {
-      allErrors += " Old password and new password does not match.";
+    if (mode === "edit" && changingPassword && currentPassword === password) {
+      allErrors +=
+        " The current password and the new password cannot be the same.";
     }
 
     if (allErrors.length > 0) {
@@ -87,13 +100,11 @@ export function ProfileForm({
         password: password || undefined,
         currentPassword: currentPassword || undefined,
         imageFile,
+        imagePreview,
       });
     } catch (e: any) {
-      if (e.response?.status === 403) {
-        setErrorMessage("Email is already in use.");
-      } else {
-        setErrorMessage(e.response?.data);
-      }
+      console.log("Error:", e.response?.statusText);
+      setErrorMessage(e.response?.statusText || "An error occurred");
     }
   };
 
@@ -106,7 +117,7 @@ export function ProfileForm({
       <div className="flex gap-2">
         <p>Email:</p>
         <input
-          className="bg-white text-black rounded-2xl"
+          className="pl-1 rounded-2xl glass"
           type="text"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -116,7 +127,7 @@ export function ProfileForm({
       <div className="flex gap-2">
         <p>First Name:</p>
         <input
-          className="bg-white text-black rounded-2xl"
+          className="pl-1 rounded-2xl glass"
           type="text"
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
@@ -126,7 +137,7 @@ export function ProfileForm({
       <div className="flex gap-2">
         <p>Last Name:</p>
         <input
-          className="bg-white text-black rounded-2xl"
+          className="pl-1 rounded-2xl glass"
           type="text"
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
@@ -148,7 +159,7 @@ export function ProfileForm({
             <>
               <p>Current Password:</p>
               <input
-                className="bg-white text-black rounded-2xl"
+                className="pl-1 rounded-2xl glass"
                 type={showPassword ? "text" : "password"}
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
@@ -160,7 +171,7 @@ export function ProfileForm({
             <p>{mode === "register" ? "Password:" : "New Password:"}</p>
 
             <input
-              className="bg-white text-black rounded-2xl"
+              className="pl-1 rounded-2xl glass"
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -168,18 +179,18 @@ export function ProfileForm({
 
             <button
               type="button"
-              className="glass px-2 rounded-2xl cursor-pointer"
+              className="glass rounded-2xl p-0.5 cursor-pointer"
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? "Hide" : "Show"}
+              {showPassword ? <Eye size={20} /> : <EyeClosed size={20} />}
             </button>
           </div>
         </>
       )}
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 items-center">
         <img
-          className="w-20 h-20 rounded-full object-cover"
+          className="w-10 h-10 rounded-full object-cover"
           src={imagePreview || defaultPfp}
           onError={(e) => (e.currentTarget.src = defaultPfp)}
         />
@@ -188,11 +199,11 @@ export function ProfileForm({
           ref={fileInputRef}
           type="file"
           accept="image/png, image/jpeg, image/gif"
-          className="bg-white text-black text-xs w-full"
+          className="text-xs glass w-45 p-1 rounded-2xl pl-2"
           onChange={handleImageChange}
         />
 
-        {imageFile && (
+        {imagePreview !== null && (
           <button
             className="bg-red-600 px-2 rounded"
             onClick={() => {

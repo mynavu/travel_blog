@@ -103,6 +103,7 @@ export function BlogModal({
 
     try {
       if (mode === "create") {
+        // ADD ERROR MESSAGE IF SERIES IS TAKEN
         const result = await axios.post(
           `${path}/blogs`,
           {
@@ -115,6 +116,7 @@ export function BlogModal({
           { headers: { "X-Authorization": cookies.token } },
         );
 
+        // Check if valid file
         if (imageFile) {
           await axios.put(
             `${path}/blogs/${result.data.blogId}/image`,
@@ -158,7 +160,7 @@ export function BlogModal({
       navigate("/search");
       window.location.reload();
     } catch (e: any) {
-      setErrorMessage(e.response?.data);
+      setErrorMessage(e.response?.statusText || "An error occurred");
       console.log(e);
     }
   };
@@ -191,7 +193,7 @@ export function BlogModal({
           <input
             type="file"
             accept="image/png, image/jpeg, image/gif"
-            className="bg-white text-black text-xs w-full"
+            className="bg-white text-black text-xs w-full glass"
             onChange={handleImageChange}
           />
         </div>
@@ -199,7 +201,7 @@ export function BlogModal({
         <p>Title</p>
         <input
           type="text"
-          className="bg-white text-black"
+          className="bg-white text-black glass"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
@@ -207,7 +209,7 @@ export function BlogModal({
         <p>Description</p>
         <input
           type="text"
-          className="bg-white text-black"
+          className="bg-white text-black glass"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
@@ -216,7 +218,7 @@ export function BlogModal({
         <div className="relative">
           <input
             type="text"
-            className="bg-white text-black w-full"
+            className="bg-white text-black w-full glass"
             onChange={(e) => setCategorySearch(e.target.value)}
             onFocus={() => setCategoryFocused(true)}
             onBlur={() => setTimeout(() => setCategoryFocused(false), 100)}

@@ -1,4 +1,3 @@
-// U11
 import { path } from "../App";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -60,8 +59,10 @@ export function Register({ setCookie, setIsLoggedIn }: RegisterProps) {
   };
 
   return (
-    <div className="mt-20 glass">
-      <ProfileForm mode="register" onSubmit={register} />
+    <div className="flex justify-center items-center min-h-screen">
+      <div className="glass rounded-2xl">
+        <ProfileForm mode="register" onSubmit={register} />
+      </div>
     </div>
   );
 }

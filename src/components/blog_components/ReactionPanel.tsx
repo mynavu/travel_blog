@@ -48,31 +48,31 @@ export function ReactionPanel({
           >
             {userReaction === "REACTION_1" ? (
               <Smile
-                className="text-amber-300 amber-glow"
+                className="text-amber-300 amber-glow selected-emoji"
                 onClick={() => removeReaction("REACTION_1")}
               />
             ) : userReaction === "REACTION_2" ? (
               <PartyPopper
-                className="text-purple-300 purple-glow"
+                className="text-purple-300 purple-glow selected-emoji"
                 onClick={() => removeReaction("REACTION_2")}
               />
             ) : userReaction === "REACTION_3" ? (
               <Heart
-                className="text-pink-300 pink-glow"
+                className="text-pink-300 pink-glow selected-emoji"
                 onClick={() => removeReaction("REACTION_3")}
               />
             ) : userReaction === "REACTION_4" ? (
               <ThumbsUp
-                className="text-sky-300 blue-glow"
+                className="text-sky-300 blue-glow selected-emoji"
                 onClick={() => removeReaction("REACTION_4")}
               />
             ) : userReaction === "REACTION_5" ? (
               <Star
-                className="text-yellow-200 yellow-glow"
+                className="text-yellow-200 yellow-glow selected-emoji"
                 onClick={() => removeReaction("REACTION_5")}
               />
             ) : (
-              <SmilePlus className="text-amber-300" />
+              <SmilePlus className="text-white" />
             )}
 
             {/* REACTIONS PANEL */}
@@ -124,7 +124,7 @@ export function ReactionPanel({
         )}
         <div className="flex gap-2">
           <div className="flex text-white gap-1">
-            <MessageCircle className="text-sky-500" />
+            <MessageCircle className="text-white" />
             {blog?.numberOfUniqueCommenters}
           </div>
           {reactions.REACTION_1 > 0 && (

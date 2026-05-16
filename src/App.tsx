@@ -66,6 +66,9 @@ function AppInner() {
         removeCookie("token");
         removeCookie("userId");
       } finally {
+        const mode = localStorage.getItem("isNight");
+        setIsNight(mode === "true");
+
         setAuthChecked(true);
         console.log("AUTH CHECK - done, authChecked set to true");
       }
@@ -108,6 +111,7 @@ function AppInner() {
       </div>
       <Navbar
         setIsNight={setIsNight}
+        isNight={isNight}
         isLoggedIn={isLoggedIn}
         setIsLoggedIn={setIsLoggedIn}
         cookies={cookies}
