@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { X, Pencil } from "lucide-react";
 import { useState, useEffect } from "react";
 import { path } from "../../App";
 import axios from "axios";
@@ -36,6 +36,8 @@ export function BlogModal({
   const navigate = useNavigate();
 
   useEffect(() => {
+    document.body.style.overflow = "hidden";
+
     (async () => {
       try {
         const [citiesResult, categoriesResult] = await Promise.all([
@@ -81,6 +83,9 @@ export function BlogModal({
         console.log(e);
       }
     })();
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, []);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -171,13 +176,16 @@ export function BlogModal({
       onClick={() => setShowModal(false)}
     >
       <div
-        className=" p-6 rounded-xl w-96 flex flex-col gap-4 text-white overflow-y-auto max-h-screen glass"
+        className=" p-6 rounded-xl w-96 flex flex-col gap-2 text-white overflow-y-auto max-h-screen glass text-xs"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center">
-          <p className="text-amber-300 font-bold">
-            {mode === "create" ? "Create Blog" : "Edit Blog"}
-          </p>
+          <div className="flex">
+            <Pencil size={20} className="pt-1 text-amber-300" />
+            <p className="text-amber-300 font-bold text-sm">
+              {mode === "create" ? "Create Blog" : "Edit Blog"}
+            </p>
+          </div>
           <X className="cursor-pointer" onClick={() => setShowModal(false)} />
         </div>
 
@@ -185,7 +193,7 @@ export function BlogModal({
         <div className="flex flex-col items-center gap-2">
           {imagePreview && (
             <img
-              className="w-full h-48 object-cover rounded"
+              className="w-30 h-30 object-cover rounded"
               src={imagePreview}
               onError={(e) => (e.currentTarget.style.display = "none")}
             />
@@ -193,139 +201,162 @@ export function BlogModal({
           <input
             type="file"
             accept="image/png, image/jpeg, image/gif"
-            className="bg-white text-black text-xs w-full glass"
+            className="text-xs glass w-45 p-1 rounded-2xl pl-2"
             onChange={handleImageChange}
           />
         </div>
 
-        <p>Title</p>
-        <input
-          type="text"
-          className="bg-white text-black glass"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-
-        <p>Description</p>
-        <input
-          type="text"
-          className="bg-white text-black glass"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-
-        <p>Categories</p>
-        <div className="relative">
+        <div className="flex gap-2">
+          <p>
+            Title<span className="text-rose-400">*</span>
+          </p>
           <input
             type="text"
-            className="bg-white text-black w-full glass"
-            onChange={(e) => setCategorySearch(e.target.value)}
-            onFocus={() => setCategoryFocused(true)}
-            onBlur={() => setTimeout(() => setCategoryFocused(false), 100)}
-            value={categorySearch}
+            className="glass rounded-2xl flex-1"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
           />
-          {categoryFocused && (
-            <div className="absolute z-50 bg-white text-black w-full max-h-40 overflow-y-auto">
-              {categories
-                .filter((category) =>
-                  category.name
-                    .toLowerCase()
-                    .startsWith(categorySearch.toLowerCase()),
-                )
-                .map((category) => (
-                  <div
-                    key={category.categoryId}
-                    className="px-2 py-1 hover:bg-gray-200 cursor-pointer"
-                    onClick={() => {
-                      if (!categoryList.includes(category)) {
-                        setCategoryList([...categoryList, category]);
-                      }
-                      setCategorySearch("");
-                      setCategoryFocused(false);
-                    }}
-                  >
-                    {category.name}
+        </div>
+        <div className="flex gap-2">
+          <p>
+            Description<span className="text-rose-400">*</span>
+          </p>
+          <input
+            type="text"
+            className="glass rounded-2xl flex-1"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </div>
+        <div className="flex gap-2">
+          <p>
+            Categories<span className="text-rose-400">*</span>
+          </p>
+          <div className="relative flex-1">
+            <input
+              type="text"
+              className="glass rounded-2xl w-full"
+              onChange={(e) => setCategorySearch(e.target.value)}
+              onFocus={() => setCategoryFocused(true)}
+              onBlur={() => setTimeout(() => setCategoryFocused(false), 100)}
+              value={categorySearch}
+            />
+            {categoryFocused && (
+              <div className="absolute z-50 bg-white text-black w-full max-h-15 overflow-y-auto rounded-lg">
+                {categories
+                  .filter((category) =>
+                    category.name
+                      .toLowerCase()
+                      .startsWith(categorySearch.toLowerCase()),
+                  )
+                  .map((category) => (
+                    <div
+                      key={category.categoryId}
+                      className="px-2 py-1 hover:bg-amber-300 cursor-pointer"
+                      onClick={() => {
+                        if (!categoryList.includes(category)) {
+                          setCategoryList([...categoryList, category]);
+                        }
+                        setCategorySearch("");
+                        setCategoryFocused(false);
+                      }}
+                    >
+                      {category.name}
+                    </div>
+                  ))}
+              </div>
+            )}
+          </div>
+        </div>
+        {categoryList.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {categoryList.map((category) => (
+              <div
+                key={category.categoryId}
+                className="text-xs glass px-1 rounded-2xl cursor-pointer hover:line-through"
+                onClick={() =>
+                  setCategoryList(categoryList.filter((i) => i !== category))
+                }
+              >
+                {category.name}
+              </div>
+            ))}
+          </div>
+        )}
+        <div className="flex gap-2">
+          <p>
+            City<span className="text-rose-400">*</span>
+          </p>
+          <select
+            className="text-white glass rounded-2xl flex-1"
+            value={chosenCity || 3}
+            onChange={(e) => setChosenCity(Number(e.target.value))}
+          >
+            {cities.map((city) => (
+              <option key={city.cityId} value={city.cityId}>
+                {city.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex gap-2">
+          {/* Series - show input if create mode, or edit mode with no existing series */}
+          {mode === "edit" && existingSeries ? (
+            <p className="text-xs text-amber-300">
+              Series: {existingSeries} (cannot be changed once set)
+            </p>
+          ) : (
+            <>
+              <p>Series</p>
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  className="rounded-2xl glass text-white pl-1 w-full focus:outline-white focus:outline"
+                  onChange={(e) => setSeries(e.target.value)}
+                  onFocus={() => setSeriesFocused(true)}
+                  onBlur={() => setTimeout(() => setSeriesFocused(false), 100)}
+                  value={series}
+                />
+                {seriesFocused && (
+                  <div className="absolute z-50  text-black bg-white w-full max-h-15 overflow-y-auto rounded-lg text-xs">
+                    {seriesList
+                      .filter(
+                        (s): s is string =>
+                          typeof s === "string" && s.trim() !== "",
+                      )
+                      .filter((s) =>
+                        s.toLowerCase().startsWith(series.toLowerCase()),
+                      )
+                      .map((s) => (
+                        <div
+                          key={s}
+                          className="px-2 py-1 hover:bg-amber-300 cursor-pointer"
+                          onClick={() => {
+                            setSeries(s);
+                            setSeriesFocused(false);
+                          }}
+                        >
+                          {s}
+                        </div>
+                      ))}
                   </div>
-                ))}
-            </div>
+                )}
+              </div>
+            </>
           )}
         </div>
-        <div className="flex flex-wrap gap-2">
-          {categoryList.map((category) => (
-            <div
-              key={category.categoryId}
-              className="text-xs text-pink-800 bg-pink-300/80 p-1 rounded-2xl cursor-pointer"
-              onClick={() =>
-                setCategoryList(categoryList.filter((i) => i !== category))
-              }
-            >
-              {category.name}
-            </div>
-          ))}
-        </div>
 
-        <p>City</p>
-        <select
-          className="text-black"
-          value={chosenCity || 3}
-          onChange={(e) => setChosenCity(Number(e.target.value))}
+        <button
+          className="glass-button rounded-2xl p-1 text-amber-300"
+          onClick={handleSubmit}
         >
-          {cities.map((city) => (
-            <option key={city.cityId} value={city.cityId}>
-              {city.name}
-            </option>
-          ))}
-        </select>
-
-        {/* Series - show input if create mode, or edit mode with no existing series */}
-        {mode === "edit" && existingSeries ? (
-          <p className="text-xs text-gray-400">
-            Series: {existingSeries} (cannot be changed once set)
-          </p>
-        ) : (
-          <>
-            <p>Series</p>
-            <div className="relative w-30">
-              <input
-                type="text"
-                className="rounded-2xl glass-blue text-white pl-1 w-30 text-sm focus:outline-sky-300 focus:outline"
-                onChange={(e) => setSeries(e.target.value)}
-                onFocus={() => setSeriesFocused(true)}
-                onBlur={() => setTimeout(() => setSeriesFocused(false), 100)}
-                value={series}
-              />
-              {seriesFocused && (
-                <div className="absolute z-50  text-white glass w-30 max-h-40 overflow-y-auto rounded-xl text-xs">
-                  {seriesList
-                    .filter(
-                      (s): s is string =>
-                        typeof s === "string" && s.trim() !== "",
-                    )
-                    .filter((s) =>
-                      s.toLowerCase().startsWith(series.toLowerCase()),
-                    )
-                    .map((s) => (
-                      <div
-                        key={s}
-                        className="px-2 py-1 hover:bg-sky-300/50 cursor-pointer"
-                        onClick={() => {
-                          setSeries(s);
-                          setSeriesFocused(false);
-                        }}
-                      >
-                        {s}
-                      </div>
-                    ))}
-                </div>
-              )}
-            </div>
-          </>
-        )}
-
-        <button className="bg-cyan-800 rounded p-1" onClick={handleSubmit}>
           {mode === "create" ? "Post" : "Update"}
         </button>
-        <p>{errorMessage}</p>
+        {errorMessage && (
+          <p className="text-rose-400 text-xs pt-3">
+            {errorMessage !== null && errorMessage}
+          </p>
+        )}
       </div>
     </div>
   );

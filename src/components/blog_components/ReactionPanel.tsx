@@ -123,10 +123,6 @@ export function ReactionPanel({
           </div>
         )}
         <div className="flex gap-2">
-          <div className="flex text-white gap-1">
-            <MessageCircle className="text-white" />
-            {blog?.numberOfUniqueCommenters}
-          </div>
           {reactions.REACTION_1 > 0 && (
             <div className="flex text-white gap-1">
               <Smile className="text-amber-300" />
@@ -157,6 +153,10 @@ export function ReactionPanel({
               {reactions.REACTION_5}
             </div>
           )}
+          <div className="flex text-white gap-1">
+            <MessageCircle className="text-white" />
+            {blog?.numberOfUniqueCommenters}
+          </div>
         </div>
       </div>
     </>

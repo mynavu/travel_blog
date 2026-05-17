@@ -6,6 +6,7 @@ import { path } from "../App";
 import { useSearchParams } from "react-router-dom";
 import type { City, Category } from "../types";
 import { BlogDisplay } from "../components/BlogDisplay";
+import { useBlogMetadata } from "../hooks/useBlogMetadata";
 
 export function Search() {
   /*
@@ -263,7 +264,7 @@ export function Search() {
       <div className="flex justify-between mt-1">
         <p className="text-amber-300">{totalBlogNum} Results Found: </p>
       </div>
-      <div className="flex justify-around gap-3 flex-wrap">
+      <div className="flex justify-start gap-3 flex-wrap">
         {blogs.length ? (
           blogs.map((blog) => (
             <BlogDisplay blog={blog} categories={categories} cities={cities} />

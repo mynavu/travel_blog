@@ -1,5 +1,5 @@
 import type { Comment } from "../../types";
-import path from "../../App";
+import { path } from "../../App";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import defaultPfp from "../../assets/default_pfp.png";
@@ -46,14 +46,19 @@ export function CommentSection({
               <div key={comment.commentId} className="flex flex-col w-full">
                 <div className="flex flex-row glass rounded-2xl rounded-bl-none p-1 w-full gap-1">
                   <img
-                    className="w-7 h-7 rounded-full object-cover shrink-0"
+                    className="w-7 h-7 rounded-full object-cover shrink-0 cursor-pointer"
                     src={`${path}/users/${comment.commenterId}/image`}
                     onError={(e) => (e.currentTarget.src = defaultPfp)}
                     onClick={() => navigate(`/profile/${comment.commenterId}`)}
                   />
                   <div className="flex flex-col items-start gap-1 min-w-0 flex-1">
                     <div className="flex flex-col items-start">
-                      <p className="text-xs text-white">
+                      <p
+                        className="text-xs text-white cursor-pointer"
+                        onClick={() =>
+                          navigate(`/profile/${comment.commenterId}`)
+                        }
+                      >
                         {comment.commenterFirstName} {comment.commenterLastName}
                       </p>
                       <p className="text-xxs leading-2 text-white">
@@ -102,7 +107,7 @@ export function CommentSection({
                         style={{ maxWidth: "90%" }}
                       >
                         <img
-                          className="w-7 h-7 rounded-full object-cover shrink-0"
+                          className="w-7 h-7 rounded-full object-cover shrink-0 cursor-pointer"
                           src={`${path}/users/${childComment.commenterId}/image`}
                           onError={(e) => (e.currentTarget.src = defaultPfp)}
                           onClick={() =>
@@ -111,7 +116,12 @@ export function CommentSection({
                         />
                         <div className="flex flex-col items-start gap-1 min-w-0 flex-1">
                           <div className="flex flex-col items-start">
-                            <p className="text-xs text-white">
+                            <p
+                              className="text-xs text-white cursor-pointer"
+                              onClick={() =>
+                                navigate(`/profile/${childComment.commenterId}`)
+                              }
+                            >
                               {childComment.commenterFirstName}{" "}
                               {childComment.commenterLastName}
                             </p>

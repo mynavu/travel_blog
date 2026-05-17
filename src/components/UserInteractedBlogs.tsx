@@ -15,16 +15,14 @@ export function UserInteractedBlogs({
   categories,
 }: UserInteractedBlogsProps) {
   return (
-    <div className="p-4 flex flex-col gap-6 ">
-      <div className="flex justify-around gap-3 flex-wrap">
-        {blogs.length ? (
-          blogs.map((blog) => (
-            <BlogDisplay blog={blog} categories={categories} cities={cities} />
-          ))
-        ) : (
-          <p>No blogs</p>
-        )}
-      </div>
+    <div className="flex justify-start gap-3 flex-wrap mb-10">
+      {blogs.length ? (
+        blogs.map((blog) => (
+          <BlogDisplay blog={blog} categories={categories} cities={cities} />
+        ))
+      ) : (
+        <p>No blogs</p>
+      )}
     </div>
   );
 }

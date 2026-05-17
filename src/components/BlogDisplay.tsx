@@ -55,7 +55,7 @@ export function BlogDisplay({ blog, categories, cities }: BlogDisplayProps) {
       </div>
       <div className="flex flex-wrap text-white gap-2">
         {blog.categoryIds.map((id) => (
-          <p className="text-xxs glass-blue rounded-2xl">
+          <p className="text-xxs glass rounded-2xl">
             &nbsp;&nbsp;&nbsp;
             {categories.find((i) => i.categoryId === id)?.name}
             &nbsp;&nbsp;&nbsp;

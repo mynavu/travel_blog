@@ -66,7 +66,7 @@ export function Profile({ cookies, authChecked }: ProfileProps) {
         }
         setBlogs(seriesMap);
 
-        // ✅ Only fetch interacted blogs if this is the owner AND we have a valid token
+        // only fetch interacted blogs if this is the owner AND we have a valid token
         const currentIsOwner = String(cookies.userId) === id;
         if (!currentIsOwner || !cookies.token) return;
 
@@ -109,12 +109,12 @@ export function Profile({ cookies, authChecked }: ProfileProps) {
         console.log("Profile fetch error:", e.response?.status, e.message);
       }
     })();
-  }, [id, authChecked, cookies.token, cookies.userId]); // ✅ added cookie deps
+  }, [id, authChecked, cookies.token, cookies.userId]); // added cookie deps
 
   if (!profile) return;
 
   return (
-    <div className="mt-20 p-4 flex flex-col gap-6">
+    <div className="mt-20 flex flex-col gap-6">
       {showModal && profile && (
         <EditProfileModal
           cookies={cookies}
@@ -130,20 +130,26 @@ export function Profile({ cookies, authChecked }: ProfileProps) {
           onError={(e) => (e.currentTarget.src = defaultPfp)}
         />
         <div>
-          <p className="text-white text-xl font-bold">
-            {profile.firstName} {profile.lastName}
-          </p>
+          <div className="flex gap-2">
+            <p className="text-white text-xl font-bold">
+              {profile.firstName} {profile.lastName}
+            </p>
+            {isOwner && (
+              <div
+                className="glass flex items-center gap-1 h-6 rounded-2xl px-1 cursor-pointer"
+                onClick={() => setShowModal(true)}
+              >
+                <Pencil className="text-white" size={18} />
+                <p className="text-white text-sm p-1">Edit</p>
+              </div>
+            )}
+          </div>
           {isOwner && (
-            <div
-              className="glass flex items-center gap-1 rounded-2xl pl-2 cursor-pointer"
-              onClick={() => setShowModal(true)}
-            >
-              <Pencil className="text-white" size={20} />
-              <p className="text-white text-sm p-1">Edit</p>
-            </div>
+            <>
+              <div className="text-white text-xs">{profile.email}</div>
+            </>
           )}
         </div>
-        {isOwner && <div className="text-white">email: {profile.email}</div>}
       </div>
 
       <div className="flex glass text-white justify-around text-sm p-2 rounded-2xl">

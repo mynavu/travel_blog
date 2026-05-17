@@ -109,35 +109,41 @@ export function ProfileForm({
   };
 
   return (
-    <div className="flex flex-col gap-2 text-white text-sm items-center">
-      <p className="text-white text-2xl">
+    <div className="flex flex-col gap-2 text-white text-sm items-center p-5">
+      <p className="text-white text-xl pb-3">
         {mode === "register" ? "Register" : "Edit Profile"}
       </p>
 
-      <div className="flex gap-2">
-        <p>Email:</p>
+      <div className="flex gap-2 w-full">
+        <p>
+          Email<span className="text-rose-400">*</span>
+        </p>
         <input
-          className="pl-1 rounded-2xl glass"
+          className="pl-1 rounded-2xl glass flex-1"
           type="text"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
       </div>
 
-      <div className="flex gap-2">
-        <p>First Name:</p>
+      <div className="flex gap-2 w-full">
+        <p>
+          First Name<span className="text-rose-400">*</span>
+        </p>
         <input
-          className="pl-1 rounded-2xl glass"
+          className="pl-1 rounded-2xl glass flex-1"
           type="text"
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
         />
       </div>
 
-      <div className="flex gap-2">
-        <p>Last Name:</p>
+      <div className="flex gap-2 w-full">
+        <p>
+          Last Name<span className="text-rose-400">*</span>
+        </p>
         <input
-          className="pl-1 rounded-2xl glass"
+          className="pl-1 rounded-2xl glass flex-1"
           type="text"
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
@@ -154,24 +160,29 @@ export function ProfileForm({
       )}
 
       {(mode === "register" || changingPassword) && (
-        <>
+        <div className="gap-2 flex flex-col w-full">
           {mode === "edit" && (
-            <>
-              <p>Current Password:</p>
+            <div className="flex gap-2 items-center w-full">
+              <p className="">
+                Current Pass<span className="text-rose-400">*</span>
+              </p>
               <input
-                className="pl-1 rounded-2xl glass"
+                className="pl-1 rounded-2xl glass flex-1"
                 type={showPassword ? "text" : "password"}
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
               />
-            </>
+            </div>
           )}
 
-          <div className="flex gap-2 items-center">
-            <p>{mode === "register" ? "Password:" : "New Password:"}</p>
+          <div className="flex gap-2 items-center w-full">
+            <p className="">
+              {mode === "register" ? "Password" : "New Pass"}
+              <span className="text-rose-400">*</span>
+            </p>
 
             <input
-              className="pl-1 rounded-2xl glass"
+              className="pl-1 rounded-2xl glass flex-1"
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -185,7 +196,7 @@ export function ProfileForm({
               {showPassword ? <Eye size={20} /> : <EyeClosed size={20} />}
             </button>
           </div>
-        </>
+        </div>
       )}
 
       <div className="flex gap-2 items-center">
@@ -218,13 +229,16 @@ export function ProfileForm({
       </div>
 
       <button
-        className="glass px-2 rounded-2xl cursor-pointer"
+        className="glass px-2 rounded-2xl cursor-pointer mt-3"
         onClick={handleSubmit}
       >
         Submit
       </button>
-
-      {errorMessage && <p>{errorMessage}</p>}
+      {errorMessage && (
+        <p className="text-rose-400 text-xs pt-3">
+          {errorMessage !== null && errorMessage}
+        </p>
+      )}
     </div>
   );
 }

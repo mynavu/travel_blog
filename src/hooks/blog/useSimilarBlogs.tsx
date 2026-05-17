@@ -17,15 +17,15 @@ export function useSimilarBlogs(
 
       // similar blogs
       const sameCity = axios.get(
-        `${path}/blogs?count=4&cityIds=${blog?.cityId}`,
+        `${path}/blogs?count=3&cityIds=${blog?.cityId}`,
       );
 
       const sameCreator = axios.get(
-        `${path}/blogs?count=4&creatorId=${blog?.creatorId}`,
+        `${path}/blogs?count=3&creatorId=${blog?.creatorId}`,
       );
 
       const sameCats = axios.get(
-        `${path}/blogs?count=4&${validCategories
+        `${path}/blogs?count=3&${validCategories
           .map((c: Category) => `categoryIds=${c.categoryId}`)
           .join("&")}`,
       );

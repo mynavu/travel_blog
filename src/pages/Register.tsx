@@ -60,7 +60,7 @@ export function Register({ setCookie, setIsLoggedIn }: RegisterProps) {
 
   return (
     <div className="flex justify-center items-center min-h-screen">
-      <div className="glass rounded-2xl">
+      <div className="glass rounded-2xl w-100 p-5">
         <ProfileForm mode="register" onSubmit={register} />
       </div>
     </div>

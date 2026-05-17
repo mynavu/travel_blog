@@ -30,12 +30,14 @@ export function BlogHeader({
   return (
     <>
       {/* PROFILE PIC AND NAME */}
-      <div className="flex flex-row gap-2 items-center glass rounded-2xl pr-2 pl-1 py-1">
+      <div
+        className="flex flex-row gap-2 items-center glass rounded-2xl pr-2 pl-1 py-1 cursor-pointer"
+        onClick={() => navigate(`/profile/${blog?.creatorId}`)}
+      >
         <img
           className="w-7 h-7 rounded-full object-cover"
           src={`${path}/users/${blog?.creatorId}/image`}
           onError={(e) => (e.currentTarget.src = defaultPfp)}
-          onClick={() => navigate(`/profile/${blog?.creatorId}`)}
         />
         <p className="text-sm text-white">
           {blog?.creatorFirstName} {blog?.creatorLastName}
@@ -48,12 +50,12 @@ export function BlogHeader({
         {String(cookies.userId) === String(blog?.creatorId) && isLoggedIn && (
           <div className="ml-2 flex pt-1.5 rounded-2xl gap-2">
             <Pencil
-              className="text-white cursor-pointer"
+              className="text-white cursor-pointer hover:text-amber-300"
               onClick={() => setShowModal(true)}
               size={15}
             />
             <Trash
-              className="text-white cursor-pointer"
+              className="text-white cursor-pointer hover:text-rose-400"
               onClick={() => setShowDeleteModal(true)}
               size={15}
             />

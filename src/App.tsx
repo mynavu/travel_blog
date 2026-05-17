@@ -7,6 +7,7 @@ import {
   Route,
   useLocation,
   useNavigate,
+  Navigate,
 } from "react-router-dom";
 import "./App.css";
 import { Search } from "./pages/Search";
@@ -31,6 +32,9 @@ function AppInner() {
 
   useEffect(() => {
     const checkAuth = async () => {
+      const mode = localStorage.getItem("isNight");
+      setIsNight(mode === "true");
+
       const token = cookies.token;
       const userId = cookies.userId;
 
@@ -66,9 +70,6 @@ function AppInner() {
         removeCookie("token");
         removeCookie("userId");
       } finally {
-        const mode = localStorage.getItem("isNight");
-        setIsNight(mode === "true");
-
         setAuthChecked(true);
         console.log("AUTH CHECK - done, authChecked set to true");
       }
@@ -76,6 +77,17 @@ function AppInner() {
 
     checkAuth();
   }, [cookies.token, cookies.userId]);
+
+  useEffect(() => {
+    if (background) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [background]);
 
   console.log("RENDER - isLoggedIn:", isLoggedIn, "authChecked:", authChecked);
 
@@ -120,6 +132,7 @@ function AppInner() {
       {isLoggedIn && <CreateButton cookies={cookies} />}
       <div>
         <Routes location={background || location}>
+          <Route path="/" element={<Navigate to="/search" replace />} />
           <Route path="/search" element={<Search />} />
           <Route
             path="/profile/:id"
