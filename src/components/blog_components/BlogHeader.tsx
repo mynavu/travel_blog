@@ -31,7 +31,7 @@ export function BlogHeader({
     <>
       {/* PROFILE PIC AND NAME */}
       <div
-        className="flex flex-row gap-2 items-center glass rounded-2xl pr-2 pl-1 py-1 cursor-pointer"
+        className="flex flex-row gap-2 items-center glass-button rounded-2xl pr-2 pl-1 py-1 cursor-pointer text-white hover:text-amber-300"
         onClick={() => navigate(`/profile/${blog?.creatorId}`)}
       >
         <img
@@ -39,7 +39,7 @@ export function BlogHeader({
           src={`${path}/users/${blog?.creatorId}/image`}
           onError={(e) => (e.currentTarget.src = defaultPfp)}
         />
-        <p className="text-sm text-white">
+        <p className="text-sm">
           {blog?.creatorFirstName} {blog?.creatorLastName}
         </p>
       </div>

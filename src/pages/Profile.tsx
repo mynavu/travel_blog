@@ -31,6 +31,14 @@ export function Profile({ cookies, authChecked }: ProfileProps) {
   const isOwner = String(cookies.userId) === id;
 
   useEffect(() => {
+    setProfile(null);
+    setBlogs({});
+    setSeries([]);
+    setCommentedBlogs([]);
+    setReactedBlogs([]);
+  }, [id]);
+
+  useEffect(() => {
     if (!id) return;
     if (!authChecked) return;
 

@@ -54,7 +54,7 @@ export function CommentSection({
                   <div className="flex flex-col items-start gap-1 min-w-0 flex-1">
                     <div className="flex flex-col items-start">
                       <p
-                        className="text-xs text-white cursor-pointer"
+                        className="text-xs text-white hover:text-amber-300 cursor-pointer"
                         onClick={() =>
                           navigate(`/profile/${comment.commenterId}`)
                         }
@@ -117,7 +117,7 @@ export function CommentSection({
                         <div className="flex flex-col items-start gap-1 min-w-0 flex-1">
                           <div className="flex flex-col items-start">
                             <p
-                              className="text-xs text-white cursor-pointer"
+                              className="text-xs text-white cursor-pointer hover:text-amber-300"
                               onClick={() =>
                                 navigate(`/profile/${childComment.commenterId}`)
                               }
