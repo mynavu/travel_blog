@@ -83,7 +83,10 @@ export function Login({ setCookie, setIsLoggedIn }: LoginProps) {
             {showPassword ? <Eye size={20} /> : <EyeClosed size={20} />}
           </button>
         </div>
-        <button className="glass px-2 rounded-2xl mt-5" onClick={() => logIn()}>
+        <button
+          className="glass-button text-amber-300 px-2 rounded-2xl mt-5"
+          onClick={() => logIn()}
+        >
           Submit
         </button>
         {errorMessage && (

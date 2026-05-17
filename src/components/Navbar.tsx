@@ -93,7 +93,7 @@ export function Navbar({
         {isLoggedIn && (
           <img
             className="w-7 h-7 rounded-full object-cover cursor-pointer"
-            src={`${path}/users/${cookies.userId}/image`}
+            src={`${path}/users/${cookies.userId}/image?t=${Date.now()}`}
             onError={(e) => (e.currentTarget.src = defaultPfp)}
             onClick={() => navigate(`/profile/${cookies.userId}`)}
           />

@@ -34,7 +34,7 @@ export function useBlogComments({
     parentId: number | null,
   ) => {
     if (!id) return;
-    if (commentString.length === 0) return;
+    if (commentString.trim().length === 0) return;
     await axios.post(
       `${path}/blogs/${id}/comments`,
       { comment: commentString, parentId },

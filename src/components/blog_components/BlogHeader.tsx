@@ -45,10 +45,10 @@ export function BlogHeader({
       </div>
 
       {/* TITLE */}
-      <div className="flex w-full">
-        <p className="text-white text-left">{blog?.title}</p>
+      <div className="flex w-full max-h-10 overflow-y-auto mt-2 mb-2">
+        <p className="text-white text-left leading-none">{blog?.title}</p>
         {String(cookies.userId) === String(blog?.creatorId) && isLoggedIn && (
-          <div className="ml-2 flex pt-1.5 rounded-2xl gap-2">
+          <div className="ml-2 flex rounded-2xl gap-2">
             <Pencil
               className="text-white cursor-pointer hover:text-amber-300"
               onClick={() => setShowModal(true)}
@@ -81,7 +81,7 @@ export function BlogHeader({
       </div>
 
       {/* CATEGORIES */}
-      <div className="flex flex-wrap text-white gap-2 mt-2">
+      <div className="flex flex-wrap text-white gap-1.5 mt-2 max-h-15 overflow-y-auto mb-2">
         {validCategories.map((cat) => (
           <p key={cat.categoryId} className="text-xxs glass rounded-2xl">
             &nbsp;&nbsp;&nbsp;{cat.name}&nbsp;&nbsp;&nbsp;
@@ -90,7 +90,9 @@ export function BlogHeader({
       </div>
 
       {/* DESCRIPTION */}
-      <p className="text-xs text-white text-left pt-2">{blog?.description}</p>
+      <p className="text-xs text-white text-left max-h-10 overflow-y-auto">
+        {blog?.description}
+      </p>
 
       {/* NUMBER OF COMMENTS */}
       <div className="flex justify-end text-white py-2 w-full">

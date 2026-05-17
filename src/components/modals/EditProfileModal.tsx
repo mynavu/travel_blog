@@ -24,12 +24,15 @@ export function EditProfileModal({
 }: EditProfileModalProps) {
   const navigate = useNavigate();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageChecked, setImageChecked] = useState(false);
+
   useEffect(() => {
     fetch(`${path}/users/${id}/image`, { method: "HEAD" })
       .then((res) =>
         setImagePreview(res.ok ? `${path}/users/${id}/image` : null),
       )
-      .catch(() => setImagePreview(null));
+      .catch(() => setImagePreview(null))
+      .finally(() => setImageChecked(true));
   }, [id]);
 
   const updateProfile = async (data: {
@@ -76,7 +79,7 @@ export function EditProfileModal({
 
       setShowModal(false);
       navigate("/search");
-      window.location.reload();
+      // window.location.reload();
     } catch (e) {
       throw e;
     }
@@ -98,16 +101,18 @@ export function EditProfileModal({
           />
         </div>
 
-        <ProfileForm
-          mode="edit"
-          initialValues={{
-            email: user.email,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            imagePreview,
-          }}
-          onSubmit={updateProfile}
-        />
+        {imageChecked && (
+          <ProfileForm
+            mode="edit"
+            initialValues={{
+              email: user.email,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              imagePreview,
+            }}
+            onSubmit={updateProfile}
+          />
+        )}
       </div>
     </div>
   );

@@ -71,6 +71,21 @@ body {
   border: 1px solid rgba(255, 220, 100, 0.3);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
 }
+
+.glass-button-yellow {
+  background: rgba(255, 220, 100, 0.3);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 220, 100, 0.3);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+}
+
+.glass-button-yellow:hover {
+  background: rgba(150, 110, 0, 0.6);
+  border: 1px solid rgba(150, 110, 0, 0.6);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
+}
+
 .counter {
   font-size: 16px;
   padding: 5px 10px;

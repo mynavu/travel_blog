@@ -53,6 +53,7 @@ export function Register({ setCookie, setIsLoggedIn }: RegisterProps) {
       }
 
       navigate("/search");
+      window.location.reload();
     } catch (e: any) {
       throw e;
     }

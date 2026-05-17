@@ -104,7 +104,10 @@ export function Search() {
           <select
             defaultValue="CREATED_DESC"
             className="rounded-2xl glass text-white pl-1 text-xs pt-0.5 pb-0.5 w-70 focus:outline-white focus:outline"
-            onChange={(e) => setSort(e.target.value)}
+            onChange={(e) => {
+              setSort(e.target.value);
+              searchBlogs(0, searchString, e.target.value);
+            }}
           >
             <option value="ALPHABETICAL_ASC">
               Ascending alphabetically by title
@@ -264,17 +267,19 @@ export function Search() {
       <div className="flex justify-between mt-1">
         <p className="text-amber-300">{totalBlogNum} Results Found: </p>
       </div>
-      <div className="flex justify-start gap-3 flex-wrap">
-        {blogs.length ? (
-          blogs.map((blog) => (
+      {blogs.length ? (
+        <div className="flex justify-start gap-3 flex-wrap">
+          {blogs.map((blog) => (
             <BlogDisplay blog={blog} categories={categories} cities={cities} />
-          ))
-        ) : (
-          <p className="text-white py-20">
+          ))}
+        </div>
+      ) : (
+        <div className="flex justify-center items-center h-40">
+          <p className="text-white">
             There are no blogs that matches your search.
           </p>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* PAGINATION */}
       <div className="flex flex-col items-center gap-2 text-white my-7">

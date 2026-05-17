@@ -15,15 +15,7 @@ export function BlogDisplay({ blog, categories, cities }: BlogDisplayProps) {
   return (
     <div
       key={blog.blogId}
-      className="w-60 p-3 flex flex-col items-start gap-1 cursor-pointer"
-      style={{
-        background: "rgba(255, 255, 255, 0.1)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
-        border: "1px solid rgba(255, 255, 255, 0.2)",
-        borderRadius: "12px",
-        boxShadow: "0 4px 24px rgba(0, 0, 0, 0.2)",
-      }}
+      className="w-60 shrink-0 p-3 flex flex-col items-start gap-1 cursor-pointer glass rounded-xl"
       onClick={() =>
         navigate(`/blog/${blog.blogId}`, {
           state: { background: location.state?.background || location },
@@ -35,7 +27,9 @@ export function BlogDisplay({ blog, categories, cities }: BlogDisplayProps) {
         onError={(e) => (e.currentTarget.style.display = "none")}
         className="w-60 h-60 object-cover"
       />
-      <p className="text-white text-sm font-bold">{blog.title}</p>
+      <p className="text-white text-sm font-bold max-h-10 overflow-y-auto">
+        {blog.title}
+      </p>
       <p className="text-white text-xs">
         by {blog.creatorFirstName} {blog.creatorLastName}
       </p>
@@ -53,7 +47,7 @@ export function BlogDisplay({ blog, categories, cities }: BlogDisplayProps) {
           </p>
         </div>
       </div>
-      <div className="flex flex-wrap text-white gap-2">
+      <div className="flex flex-wrap text-white gap-1.5 max-h-15 overflow-y-auto">
         {blog.categoryIds.map((id) => (
           <p className="text-xxs glass rounded-2xl">
             &nbsp;&nbsp;&nbsp;

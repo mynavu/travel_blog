@@ -129,7 +129,7 @@ export function Profile({ cookies, authChecked }: ProfileProps) {
           src={`${path}/users/${id}/image`}
           onError={(e) => (e.currentTarget.src = defaultPfp)}
         />
-        <div>
+        <div className="flex flex-col items-start">
           <div className="flex gap-2">
             <p className="text-white text-xl font-bold">
               {profile.firstName} {profile.lastName}

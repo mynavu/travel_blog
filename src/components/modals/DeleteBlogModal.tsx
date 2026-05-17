@@ -91,7 +91,7 @@ export function DeleteBlogModal({
             Are you sure you want to delete this blog? This action cannot be
             undone.
           </p>
-          {error && <p className="text-red-400 text-xs">{error}</p>}
+          {error && <p className="text-amber-300 text-xs">{error}</p>}
           <div className="flex gap-2">
             <button
               className="flex-1 glass rounded p-1"

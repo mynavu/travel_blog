@@ -201,7 +201,7 @@ export function BlogModal({
           <input
             type="file"
             accept="image/png, image/jpeg, image/gif"
-            className="text-xs glass w-45 p-1 rounded-2xl pl-2"
+            className="text-xs glass-button w-45 p-1 rounded-2xl pl-2 cursor-pointer"
             onChange={handleImageChange}
           />
         </div>
@@ -318,7 +318,7 @@ export function BlogModal({
                   value={series}
                 />
                 {seriesFocused && (
-                  <div className="absolute z-50  text-black bg-white w-full max-h-15 overflow-y-auto rounded-lg text-xs">
+                  <div className="absolute z-50  text-black bg-white w-full max-h-12 overflow-y-auto rounded-lg text-xs">
                     {seriesList
                       .filter(
                         (s): s is string =>

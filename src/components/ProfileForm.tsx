@@ -31,7 +31,7 @@ export function ProfileForm({
   const [lastName, setLastName] = useState(initialValues?.lastName ?? "");
   const [password, setPassword] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>();
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(
     initialValues?.imagePreview ?? null,
   );
@@ -51,15 +51,16 @@ export function ProfileForm({
       allErrors += " Email is invalid.";
     }
 
-    if (
-      mode === "edit" &&
-      initialValues?.firstName === firstName &&
-      initialValues?.lastName === lastName &&
-      initialValues.email === email &&
-      !changingPassword
-    ) {
-      allErrors += " All information is identical to the previous one.";
-    }
+    // if (
+    //   mode === "edit" &&
+    //   initialValues?.firstName === firstName &&
+    //   initialValues?.lastName === lastName &&
+    //   initialValues.email === email &&
+    //   imageFile === null &&
+    //   !changingPassword
+    // ) {
+    //   allErrors += " All information is identical to the previous one.";
+    // }
 
     if (mode === "register" || changingPassword) {
       if (password.length < 6) {
@@ -73,6 +74,8 @@ export function ProfileForm({
     }
 
     if (allErrors.length > 0) {
+      setPassword("");
+      setCurrentPassword("");
       setErrorMessage(allErrors.trimStart());
       return false;
     }
@@ -152,8 +155,12 @@ export function ProfileForm({
 
       {mode === "edit" && (
         <button
-          className="glass px-2 rounded-2xl cursor-pointer"
-          onClick={() => setChangingPassword(!changingPassword)}
+          className={`${changingPassword ? "glass-button-yellow" : "glass-button"} px-2 rounded-2xl cursor-pointer`}
+          onClick={() => {
+            setChangingPassword(!changingPassword);
+            setPassword("");
+            setCurrentPassword("");
+          }}
         >
           {changingPassword ? "Cancel Password Change" : "Change Password"}
         </button>
@@ -164,7 +171,7 @@ export function ProfileForm({
           {mode === "edit" && (
             <div className="flex gap-2 items-center w-full">
               <p className="">
-                Current Pass<span className="text-rose-400">*</span>
+                Old Pass<span className="text-rose-400">*</span>
               </p>
               <input
                 className="pl-1 rounded-2xl glass flex-1"
@@ -172,6 +179,13 @@ export function ProfileForm({
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
               />
+              <button
+                type="button"
+                className="glass rounded-2xl p-0.5 cursor-pointer"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <Eye size={20} /> : <EyeClosed size={20} />}
+              </button>
             </div>
           )}
 
@@ -180,7 +194,6 @@ export function ProfileForm({
               {mode === "register" ? "Password" : "New Pass"}
               <span className="text-rose-400">*</span>
             </p>
-
             <input
               className="pl-1 rounded-2xl glass flex-1"
               type={showPassword ? "text" : "password"}
@@ -201,7 +214,7 @@ export function ProfileForm({
 
       <div className="flex gap-2 items-center">
         <img
-          className="w-10 h-10 rounded-full object-cover"
+          className="w-7 h-7 rounded-full object-cover"
           src={imagePreview || defaultPfp}
           onError={(e) => (e.currentTarget.src = defaultPfp)}
         />
@@ -210,13 +223,13 @@ export function ProfileForm({
           ref={fileInputRef}
           type="file"
           accept="image/png, image/jpeg, image/gif"
-          className="text-xs glass w-45 p-1 rounded-2xl pl-2"
+          className="text-xs glass-button w-45 p-1 rounded-2xl pl-2 cursor-pointer"
           onChange={handleImageChange}
         />
 
         {imagePreview !== null && (
           <button
-            className="bg-red-600 px-2 rounded"
+            className="glass-pink px-2 py-1 rounded-2xl text-xs"
             onClick={() => {
               setImageFile(null);
               setImagePreview(null);
@@ -229,7 +242,7 @@ export function ProfileForm({
       </div>
 
       <button
-        className="glass px-2 rounded-2xl cursor-pointer mt-3"
+        className="glass-button px-2 rounded-2xl cursor-pointer mt-3 text-amber-300"
         onClick={handleSubmit}
       >
         Submit
