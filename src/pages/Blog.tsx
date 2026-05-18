@@ -13,6 +13,7 @@ import { useBlog } from "../hooks/useBlog";
 import { useBlogComments } from "../hooks/blog/useBlogComments";
 import { useSimilarBlogs } from "../hooks/blog/useSimilarBlogs";
 import { useBlogMetadata } from "../hooks/useBlogMetadata";
+import defaultImage from "../assets/default_image.png";
 
 type BlogProps = {
   isLoggedIn: boolean;
@@ -67,7 +68,7 @@ export function Blog({ cookies, isLoggedIn }: BlogProps) {
           <div className="flex flex-col w-100">
             <img
               src={`${path}/blogs/${blog?.blogId}/image`}
-              onError={(e) => (e.currentTarget.style.display = "none")}
+              onError={(e) => (e.currentTarget.src = defaultImage)}
               className="w-100 h-100 object-cover"
             />
             <ReactionPanel

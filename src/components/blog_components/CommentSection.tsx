@@ -72,11 +72,11 @@ export function CommentSection({
                     </p>
                     <div className="flex gap-2">
                       <div
-                        className="flex items-center gap-1 cursor-pointer"
+                        className={`flex items-center gap-1 cursor-pointer hover:text-amber-300 ${expandedComments.includes(comment.commentId) ? "text-amber-300" : "text-white"}`}
                         onClick={() => toggleReplies(comment.commentId)}
                       >
-                        <MessageCircle size={16} className="text-white" />
-                        <p className="text-xs text-white">{replies.length}</p>
+                        <MessageCircle size={16} />
+                        <p className="text-xs">{replies.length}</p>
                       </div>
 
                       {/* REPLY COMMENT */}
@@ -175,7 +175,7 @@ export function CommentSection({
             }
           }}
           size={25}
-          className="glass rounded-2xl shrink-0 ml-2 text-white cursor-pointer"
+          className="glass rounded-2xl shrink-0 ml-2 text-white cursor-pointer hover:text-amber-300"
         />
       </div>
     </>

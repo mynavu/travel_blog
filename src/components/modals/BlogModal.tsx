@@ -4,6 +4,7 @@ import { path } from "../../App";
 import axios from "axios";
 import type { City, Category } from "../../types";
 import { useNavigate } from "react-router-dom";
+import defaultImage from "../../assets/default_image.png";
 
 type BlogModalProps = {
   mode: "create" | "edit";
@@ -197,7 +198,7 @@ export function BlogModal({
             <img
               className="w-30 h-30 object-cover rounded"
               src={imagePreview}
-              onError={(e) => (e.currentTarget.style.display = "none")}
+              onError={(e) => (e.currentTarget.src = defaultImage)}
             />
           )}
           <input

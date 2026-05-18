@@ -2,6 +2,7 @@ import type { Blog, Category, City } from "../types";
 import { useNavigate, useLocation } from "react-router-dom";
 import { path } from "../App";
 import { MapPin, Clock } from "lucide-react";
+import defaultImage from "../assets/default_image.png";
 
 type BlogDisplayProps = {
   blog: Blog;
@@ -24,7 +25,7 @@ export function BlogDisplay({ blog, categories, cities }: BlogDisplayProps) {
     >
       <img
         src={`${path}/blogs/${blog.blogId}/image`}
-        onError={(e) => (e.currentTarget.style.display = "none")}
+        onError={(e) => (e.currentTarget.src = defaultImage)}
         className="w-60 h-60 object-cover"
       />
       <p className="text-white text-sm font-bold max-h-10 overflow-y-auto">
