@@ -162,7 +162,7 @@ export function Search() {
                   <div
                     key={city.cityId}
                     className="px-2 py-1 hover:bg-sky-300/50 cursor-pointer"
-                    onClick={() => {
+                    onMouseDown={() => {
                       if (!cityList.includes(city)) {
                         setCityList([...cityList, city]);
                       }
@@ -200,7 +200,7 @@ export function Search() {
                   <div
                     key={category.categoryId}
                     className="px-2 py-1 hover:bg-pink-300/50 cursor-pointer"
-                    onClick={() => {
+                    onMouseDown={() => {
                       if (!categoryList.includes(category)) {
                         setCategoryList([...categoryList, category]);
                       }
@@ -227,7 +227,7 @@ export function Search() {
 
         {/* SEARCH BUTTON */}
         <button
-          onClick={() => {
+          onMouseDown={() => {
             setCurrentIndex(0);
             searchBlogs(0);
           }}
@@ -243,7 +243,7 @@ export function Search() {
           <div
             key={city.cityId}
             className="text-xs text-white glass-blue p-1 rounded-2xl cursor-pointer hover:line-through"
-            onClick={() => setCityList(cityList.filter((i) => i !== city))}
+            onMouseDown={() => setCityList(cityList.filter((i) => i !== city))}
           >
             {city.name}
           </div>
@@ -254,7 +254,7 @@ export function Search() {
           <div
             key={category.categoryId}
             className="text-xs text-white glass-pink p-1 rounded-2xl cursor-pointer hover:line-through"
-            onClick={() =>
+            onMouseDown={() =>
               setCategoryList(categoryList.filter((i) => i !== category))
             }
           >
@@ -288,7 +288,7 @@ export function Search() {
           {currentIndex >= 16 && (
             <>
               <button
-                onClick={() => {
+                onMouseDown={() => {
                   setCurrentIndex(0);
                   searchBlogs(0);
                 }}
@@ -302,7 +302,7 @@ export function Search() {
           {/* PREV */}
           {currentIndex >= 8 && (
             <button
-              onClick={() => {
+              onMouseDown={() => {
                 const newIndex = currentIndex - 8;
                 setCurrentIndex(newIndex);
                 searchBlogs(newIndex);
@@ -319,7 +319,7 @@ export function Search() {
           {/* NEXT */}
           {currentIndex + 8 < totalBlogNum && (
             <button
-              onClick={() => {
+              onMouseDown={() => {
                 const newIndex = currentIndex + 8;
                 setCurrentIndex(newIndex);
                 searchBlogs(newIndex);
@@ -332,7 +332,7 @@ export function Search() {
             <>
               <p>...</p>
               <button
-                onClick={() => {
+                onMouseDown={() => {
                   const newIndex = (Math.ceil(totalBlogNum / 8) - 1) * 8;
                   setCurrentIndex(newIndex);
                   searchBlogs(newIndex);

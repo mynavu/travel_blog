@@ -18,6 +18,10 @@ body {
   text-shadow: 0px 1px 0px var(--tw-text-shadow-color, rgb(0 0 0 / 0.15));
 }
 
+option {
+  color: black;
+}
+
 .glass {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(12px);

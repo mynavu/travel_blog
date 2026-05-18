@@ -46,7 +46,7 @@ export function BlogHeader({
 
       {/* TITLE */}
       <div className="flex w-full max-h-10 overflow-y-auto mt-2 mb-2">
-        <p className="text-white text-left leading-none">{blog?.title}</p>
+        <p className="text-white text-left">{blog?.title}</p>
         {String(cookies.userId) === String(blog?.creatorId) && isLoggedIn && (
           <div className="ml-2 flex rounded-2xl gap-2">
             <Pencil
@@ -64,7 +64,9 @@ export function BlogHeader({
       </div>
 
       {/* SERIES */}
-      <p className="text-xs text-white text-left">Series: {blog?.series}</p>
+      <p className="text-xs text-white text-left overflow-y-auto max-h-10">
+        Series: {blog?.series}
+      </p>
 
       {/* LOCATION AND DATE */}
       <div className="flex gap-2 mt-2">
@@ -90,7 +92,7 @@ export function BlogHeader({
       </div>
 
       {/* DESCRIPTION */}
-      <p className="text-xs text-white text-left max-h-10 overflow-y-auto">
+      <p className="text-xs text-white text-left max-h-8 overflow-y-auto">
         {blog?.description}
       </p>
 

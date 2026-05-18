@@ -15,7 +15,7 @@ export function BlogDisplay({ blog, categories, cities }: BlogDisplayProps) {
   return (
     <div
       key={blog.blogId}
-      className="w-60 shrink-0 p-3 flex flex-col items-start gap-1 cursor-pointer glass rounded-xl"
+      className="w-60 shrink-0 p-3 flex flex-col items-start gap-1 cursor-pointer glass-button rounded-xl"
       onClick={() =>
         navigate(`/blog/${blog.blogId}`, {
           state: { background: location.state?.background || location },

@@ -102,7 +102,9 @@ export function BlogModal({
       categoryList.length === 0 ||
       !imagePreview
     ) {
-      setErrorMessage("Please fill out the required field");
+      setErrorMessage(
+        "Please fill out the required field including uploading an image",
+      );
       return;
     }
 
@@ -253,7 +255,7 @@ export function BlogModal({
                     <div
                       key={category.categoryId}
                       className="px-2 py-1 hover:bg-amber-300 cursor-pointer"
-                      onClick={() => {
+                      onMouseDown={() => {
                         if (!categoryList.includes(category)) {
                           setCategoryList([...categoryList, category]);
                         }
@@ -331,7 +333,7 @@ export function BlogModal({
                         <div
                           key={s}
                           className="px-2 py-1 hover:bg-amber-300 cursor-pointer"
-                          onClick={() => {
+                          onMouseDown={() => {
                             setSeries(s);
                             setSeriesFocused(false);
                           }}
