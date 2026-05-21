@@ -97,8 +97,8 @@ export function BlogModal({
 
   const handleSubmit = async () => {
     if (
-      !title ||
-      !description ||
+      title.trim().length === 0 ||
+      description.trim().length === 0 ||
       chosenCity === null ||
       categoryList.length === 0 ||
       !imagePreview

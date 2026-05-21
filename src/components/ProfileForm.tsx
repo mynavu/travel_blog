@@ -43,7 +43,11 @@ export function ProfileForm({
   const validate = () => {
     let allErrors = "";
 
-    if (email.length === 0 || firstName.length === 0 || lastName.length === 0) {
+    if (
+      email.trim().length === 0 ||
+      firstName.trim().length === 0 ||
+      lastName.trim().length === 0
+    ) {
       allErrors += "Please fill in all the required info.";
     }
 

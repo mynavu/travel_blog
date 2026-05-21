@@ -25,6 +25,10 @@ export function useBlogReactions({ id, cookies }: UseBlogReactionsProps) {
   useEffect(() => {
     if (!id) return;
 
+    // Reset state immediately when id changes
+    setReactions(defaultReactions);
+    setUserReaction(null);
+
     const load = async () => {
       const reactionRes = await axios.get(`${path}/blogs/${id}/react`);
 
