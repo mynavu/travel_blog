@@ -1,75 +1,56 @@
-# React + TypeScript + Vite
+# Travel Blog
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack travel blogging web application developed for the **SENG365 Web Computing Architectures** course at the University of Canterbury. The application allows users to browse, create, and interact with travel blogs through a modern, responsive interface while communicating with the official SENG365 reference backend. :contentReference[oaicite:0]{index=0}
 
-Currently, two official plugins are available:
+## Features
+- 🌍 Browse travel blogs
+- ✍️ Create and manage travel entries
+- 🔐 User authentication
+- 📷 Upload and display images
+- ❤️ Like and interact with blogs
+- 📱 Responsive interface
+- ✨ Interactive UI enhanced with WebGL shaders
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tech Stack
 
-## React Compiler
+### Frontend
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+- React
+- TypeScript
+- Tailwind CSS
+- GLSL/WebGL Shaders
+- Vite
 
-Note: This will impact Vite dev & build performances.
+### Backend
 
-## Expanding the ESLint configuration
+This frontend communicates with the official SENG365 reference server.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Node.js
+- Express.js
+- Bruno (API testing)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Backend repository:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+https://eng-git.canterbury.ac.nz/public-seng-resources/seng365/seng365-reference-server-public-2026
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Getting Started
+
+### Prerequisites
+
+- Node.js 20+
+- npm
+
+### Installation
+
+```bash
+git clone <frontend-repository-url>
+cd <project-folder>
+
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Run the development server
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
