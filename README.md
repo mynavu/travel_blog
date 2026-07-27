@@ -43,8 +43,8 @@ https://eng-git.canterbury.ac.nz/public-seng-resources/seng365/seng365-reference
 ### Installation
 
 ```bash
-git clone <frontend-repository-url>
-cd <project-folder>
+git clone https://github.com/mynavu/travel_blog
+cd travel_blog
 
 npm install
 ```
